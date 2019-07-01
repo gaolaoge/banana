@@ -1,0 +1,59 @@
+<template>
+    <div
+        class="main_module"
+        v-loading="login_head.showBox"                     
+        element-loading-background="rgba(0, 0, 0, 0.5)"
+    >
+        <moduletop />
+        <moduleleft />
+        <avatar-cutter
+            v-if="login_head.showBox"
+            return-type="url"
+        ></avatar-cutter>
+    </div>
+</template>
+
+<script>
+
+import Cookie from 'js-cookie'
+import module_left from '@/components/module_left'
+import module_top from '@/components/module_top'
+import AvatarCutter from '@/components/avatar-cutter'       //头像上传模块
+import { mapState, mapMutations } from 'vuex'
+
+export default {
+    name: 'main_module',
+    data() {
+        return {
+            
+        }
+    },
+    components: {
+        'moduleleft': module_left,
+        'moduletop': module_top,
+        "avatar-cutter": AvatarCutter,
+    },
+    computed: {
+        ...mapState(['login_head'])
+    },
+    created() {
+        //此处进行token验证
+        let s = Cookie.get('token'),
+            this_ = this
+        // console.log(s);
+        if (!s) {
+            this.$message.error('尚未登录')
+            setTimeout(() => {
+                this_.$router.replace('/')
+            }, 3000)
+        }
+
+    },
+    methods: {
+        ...mapMutations(['changeShowState'])
+    }
+}
+</script>
+
+<style scoped>
+</style>

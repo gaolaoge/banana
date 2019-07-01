@@ -8,6 +8,7 @@ import axios from 'axios'
 import {store} from './store/store'
 
 Vue.config.productionTip = false
+axios.defaults.withCredentials = true
 
 Vue.prototype.$axios = axios
 Vue.prototype.wangqiang = '/wangqiang'

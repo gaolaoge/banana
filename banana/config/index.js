@@ -12,14 +12,14 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       '/wangqiang': {
-        target: 'http://192.168.1.170:5445',
+        target: 'http://192.168.1.89:8080',
         changeOrigin: true,
         pathRewrite: {
           '^/wangqiang': '/'
         }
       },
       '/jiabingqian': {
-        target: 'http://192.168.1.13:5456',
+        target: 'http://192.168.1.90:8089',
         changeOrigin: true,
         pathRewrite: {
           '^/jiabingqian': '/'
