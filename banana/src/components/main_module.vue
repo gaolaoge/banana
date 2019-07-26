@@ -1,7 +1,7 @@
 <template>
     <div
         class="main_module"
-        v-loading="login_head.showBox"                     
+        v-loading="login_head.showBox"
         element-loading-background="rgba(0, 0, 0, 0.5)"
     >
         <moduletop />
@@ -20,12 +20,13 @@ import module_left from '@/components/module_left'
 import module_top from '@/components/module_top'
 import AvatarCutter from '@/components/avatar-cutter'       //头像上传模块
 import { mapState, mapMutations } from 'vuex'
+import { baseData } from '@/api/api_base'
 
 export default {
     name: 'main_module',
     data() {
         return {
-            
+
         }
     },
     components: {
@@ -34,23 +35,31 @@ export default {
         "avatar-cutter": AvatarCutter,
     },
     computed: {
-        ...mapState(['login_head'])
+        ...mapState(['login_head']),
     },
     created() {
         //此处进行token验证
         let s = Cookie.get('token'),
             this_ = this
-        // console.log(s);
         if (!s) {
             this.$message.error('尚未登录')
             setTimeout(() => {
                 this_.$router.replace('/')
             }, 3000)
+            return false
         }
-
+        //获取基本数据
+        baseData({'data': 'data'})
+            .then(data => {
+                let z = {}
+                data.data.forEach((currentVal) => {
+                    z[Object.keys(currentVal)[0]] = Object.values(currentVal)[0]
+                })
+                this.change_baseData(z)
+            })
     },
     methods: {
-        ...mapMutations(['changeShowState'])
+        ...mapMutations(['changeShowState','change_baseData'])
     }
 }
 </script>

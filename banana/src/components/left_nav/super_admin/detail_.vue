@@ -99,14 +99,14 @@
                     <el-form-item label="姓名">
                         <el-input
                             v-model="form2.adminName"
-                            v-bind:readonly="detail_e.type == 'check'"
+                            readonly
                         >
                         </el-input>
                     </el-form-item>
                     <el-form-item label="账户信息">
                         <el-input
                             v-model="form2.account"
-                            v-bind:readonly="detail_e.type == 'check'"
+                            readonly
                         >
                         </el-input>
                     </el-form-item>
@@ -140,6 +140,11 @@
                     </el-form-item>
                 </el-form>
             </article>
+            <el-button
+                class="c"
+                type="primary"
+                v-on:click="p"
+            >完成</el-button>
         </div>
 
     </div>
@@ -148,7 +153,8 @@
 <script>
 
 import {
-    detail_G
+    detail_G,
+    detail_P
 } from '@/api/api_base'
 import { mapState } from 'vuex'
 
@@ -233,10 +239,30 @@ export default {
             ]
         }
     },
+    methods: {
+        //提交
+        p(){
+            let t = {}
+            Object.assign(t,this.form,this.form2)
+            console.log(t)
+            detail_P({'data': t})
+                .then(data => {
+                    this.$message({
+                        message: '修改成功',
+                        type: 'success',
+                        center: true
+                    })
+                })
+                .catch(err => {
+                    console.log(err)
+                })
+        },
+    },
     computed: {
         ...mapState(['detail_e'])
     },
     created() {
+
         let s = `name=${this.detail_e.name}&id=${this.detail_e.id}&firmKEY=${this.detail_e.firmKEY}`
         detail_G(s)
             .then(data => {
@@ -271,6 +297,11 @@ export default {
             .el-checkbox {
                 display: block;
             }
+        }
+        .c {
+            // display: block;
+            float: right;
+            margin-right: 42px;
         }
     }
 }

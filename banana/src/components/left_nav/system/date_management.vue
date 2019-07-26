@@ -1,12 +1,12 @@
 <template>
-    <div class="company_management">
-        company_management
+    <div>
+        date_management
     </div>
 </template>
 
 <script>
 export default {
-    name: 'company_management',
+    name: '',
     data(){
         return {
 
@@ -15,6 +15,6 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 
 </style>

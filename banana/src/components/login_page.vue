@@ -165,8 +165,8 @@ export default {
     name: 'login_page',
     data() {
         return {
-            account: '',
-            password: '',
+            account: 'testfirm',
+            password: '0000',
             verify_input: '',
             remember_account: true,
             login_page: true,
@@ -190,6 +190,9 @@ export default {
     watch: {
 
     },
+    mounted() {
+        this.verify_input = this.login_.verify_input
+    },
     methods: {
         //登录事件
         login() {
@@ -210,12 +213,12 @@ export default {
                 return false;
             }
             //发送AJAX  
-            this.$axios.post(this.jiabingqian + '/login/verify.do', {
+            this.$axios.post(this.wangqiang + '/login/verify.do', {
                 username: this.account,
                 password: this.password
             })
                 .then(data => {
-                    // console.log(data);
+                    // console.log(data)
                     if (data.data === 0) {
                         this.$message.error('账号或密码填写错误')
                         return false
@@ -238,7 +241,7 @@ export default {
                 this.$message.error('需找回的账号未输入')
                 return false
             }
-            this.$axios.get(this.jiabingqian + '/login/reset.do?data=' + this.account_num)
+            this.$axios.get(this.wangqiang + '/login/reset.do?data=' + this.account_num)
                 .then(function (data) {
 
                     this.fir_show = false
@@ -280,7 +283,7 @@ export default {
                 this.$message.error('两次密码输入不同')
                 return false
             }
-            this.$axios.post(this.jiabingqian + '/login/verify.do', {
+            this.$axios.post(this.wangqiang + '/login/verify.do', {
                 newPassWord: this.set_newPassWord
             })
                 .then(function (data) {

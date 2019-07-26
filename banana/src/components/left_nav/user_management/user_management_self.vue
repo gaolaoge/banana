@@ -20,20 +20,17 @@
                                 ></el-input>
                             </el-form-item>
                             <el-form-item label="姓名：">
-                                <el-input
-                                    v-model="form.name"
-                                    readonly=true
-                                ></el-input>
+                                <el-input v-model="form.adminName"></el-input>
                             </el-form-item>
                             <el-form-item label="电话：">
-                                <el-input v-model="form.phone"></el-input>
+                                <el-input v-model="form.adminPhone"></el-input>
                             </el-form-item>
                             <el-form-item label="邮箱：">
-                                <el-input v-model="form.email"></el-input>
+                                <el-input v-model="form.adminEmail"></el-input>
                             </el-form-item>
                             <el-form-item label="部门：">
                                 <el-select
-                                    v-model="form.department"
+                                    v-model="form.adminDepartment"
                                     placeholder="请选择活动区域"
                                 >
                                     <el-option
@@ -244,10 +241,10 @@ export default {
         return {
             form: {
                 account: '',
-                name: '',
-                phone: '',
-                email: '',
-                department: '',
+                adminName: '',
+                adminPhone: '',
+                adminEmail: '',
+                adminDepartment: '',
             },
             form2: {
                 old_password: '',
@@ -320,7 +317,7 @@ export default {
             }
             personal_password_send(s)
                 .then(data => {
-                    
+
                     if (data.data === 0) {
                         this.$message({
                             message: '原始密码填写错误',
@@ -391,9 +388,10 @@ export default {
         //下一步
         send() {
             let s = {
-                'phone': this.form.phone,
-                'email': this.form.email,
-                'department': this.form.department,
+                'name': this.form.adminName,
+                'phone': this.form.adminPhone,
+                'email': this.form.adminEmail,
+                'department': this.form.adminDepartment,
                 'headPortrait': this.login_head.imgSrc
             }
             personal_message_send(s)
@@ -424,7 +422,9 @@ export default {
         personal_message_center()
             .then(data => {
                 this.form = data.data[0]
-                this.$store.commit('change_head', data.data[0].headPortrait)
+                if (data.data[0].headPortrait !== '') {
+                    this.$store.commit('change_head', data.data[0].headPortrait)
+                }
             })
     }
 }

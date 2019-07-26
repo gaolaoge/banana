@@ -18,6 +18,7 @@
                                     v-bind:key="user.id"
                                     draggable="true"
                                     v-on:dragstart="dragstart_"
+                                    v-on:click="s($event)"
                                 >
                                     <div class="item">
                                         <span class="span">{{ user.department }}</span>
@@ -44,7 +45,14 @@
                             v-on:dragover="dragover_"
                             v-on:drop="drop_"
                         >
-                            {{ part }}
+                            <el-badge
+                                :value="num[part]"
+                                class="item"
+                                v-bind:hidden="num[part] == 0"
+                            >
+                                <!-- <el-button size="small">评论</el-button> -->
+                                <p style="width: 70px;">{{ part }}</p>
+                            </el-badge>
 
                         </li>
                     </ul>
@@ -72,24 +80,26 @@
                 >
                     <li>
                         <span class="tit">{{ item[0].department }}</span>
-                        <ul
-                            v-for="i in item"
-                            v-bind:key="i.key"
-                        >
-                            <li>
+                        <ul>
+                            <li
+                                v-for="i in item"
+                                v-bind:key="i.key"
+                            >
                                 {{ i.department }}
                                 -
                                 {{ i.userName }}
                                 <i
-                                    class="el-icon-remove-outline"
-                                    style="background-color: #F56C6C;color: #fff;border-radius: 50%"
-                                    v-if="i.reason == 'done'"
+                                    class="el-icon-delete-solid"
+                                    style="color: #F56C6C;"
+                                    v-if="i.reason == 'begin'"
+                                    v-on:click="back_(i)"
                                 ></i>
-                                <i
+                                <!-- <i
                                     class="el-icon-circle-plus-outline"
                                     style="background-color: #67C23A;color: #fff;border-radius: 50%"
-                                    v-if="i.reason == 'begin'"
-                                ></i>
+                                    v-if="i.reason == 'done'"
+                                ></i> -->
+                                <!-- [ {{ i.root }} ] -->
                             </li>
                         </ul>
                     </li>
@@ -120,8 +130,8 @@ export default {
     name: 'batch_operation',
     data() {
         return {
-            data: '',
-            users: {
+            data: '',           //留作对比的数据
+            users: {            //修改的数据
                 //营销部
                 '营销部': [
                     {
@@ -379,10 +389,40 @@ export default {
                 ],
             },
             t: {},
-            dialogVisible: false
+            dialogVisible: false,
+            num: {
+                '营销部': 0,
+                '市场部': 0,
+                '产品部': 0,
+                '人事部': 0,
+                '研发部': 0,
+                '设计部': 0,
+                '后勤部': 0,
+            },
+            pitch_on: {}        //批量移动
         }
     },
     methods: {
+        //多选
+        s(e) {
+            // console.log(e.currentTarget.innerText)
+            let part_ = e.currentTarget.innerText.split(' - ')[0],
+                name_ = e.currentTarget.innerText.split(' - ')[1]
+            // console.log(e.currentTarget.classList.length)
+            if (e.currentTarget.classList.length == 0) {            //放入拖动队列
+                e.currentTarget.classList.add('pitch_on')
+                if (this.pitch_on[part_]) {
+                    this.pitch_on[part_].push(name_)
+                } else {
+                    this.pitch_on[part_] = [name_]
+                }
+            } else {                                                //移出
+                e.currentTarget.classList.remove('pitch_on')
+                let i = this.pitch_on[part_].indexOf(name_)
+                this.pitch_on[part_].splice(i, 1)
+            }
+            // console.log(this.pitch_on)
+        },
         dragover_(ev) {
             ev.preventDefault();
         },
@@ -393,18 +433,43 @@ export default {
         //接收数据
         drop_(ev) {
             ev.preventDefault();
-            let data = ev.dataTransfer.getData("Text").split(' - '),
-                old_part = data[0],
-                name = data[1],
-                new_part = ev.target.innerText,
-                s = this.users[old_part].findIndex((currentVal, index, arr) => {
-                    return currentVal.userName == name
+            let data = '',                                          //要移动的值 
+                old_part = '',                                      //单独移动原部门
+                name = '',                                          //单独移动职员
+                new_part = ev.target.innerText.split(/\n/)[0],      //要移动到的部门
+                self_ = this
+            if (Object.keys(this.pitch_on).length == 0) {              //单独移动
+                data = ev.dataTransfer.getData("Text").split(' - ')
+                old_part = data[0]
+                name = data[1]
+                move_(old_part,name)
+            } else {                                                   //批量移动
+                Object.keys(this.pitch_on).forEach((currentVal) => {
+                    old_part = currentVal
+                    this.pitch_on[currentVal].forEach((currentval_) => {
+                        name = currentval_
+                        move_(old_part,name)
+                    })
+                })
+            }
+            function move_(o_,n_) {
+                let s = self_.users[o_].findIndex((currentVal, index, arr) => {
+                    return currentVal.userName == n_
                 }),
-                user_info = this.users[old_part][s]
-            user_info.department = new_part
-            user_info.revise = true
-            this.users[old_part].splice(s, 1)
-            this.users[new_part].push(user_info)
+                    user_info = self_.users[o_][s]                       //获取要移动员工的全部信息
+                if (new_part == o_) {                                    //无视本部门移动
+                    return false
+                }
+                user_info.department = new_part
+                user_info.revise = true
+                user_info.root = o_
+                self_.users[o_].splice(s, 1)
+                self_.users[new_part].push(user_info)
+                self_.num[new_part]++
+                for(var i in self_.pitch_on){
+                    delete self_.pitch_on[i]
+                }
+            }
         },
         //确认修改
         confirm() {
@@ -429,7 +494,6 @@ export default {
                         return currentVal_i.account == currentVal_.account
                     })
                     if (!s) {
-                        console.log('gaoge' + currentVal_.department)
                         currentVal_.reason = 'begin'
                         if (this.t[currentVal_.department]) {
                             this.t[currentVal_.department].push(currentVal_)
@@ -439,20 +503,26 @@ export default {
                     }
                 })
             })
+
             if (!Object.keys(this.t).length) {
                 this.$message.error('并无修改')
-            }else{
+            } else {
                 this.dialogVisible = true
             }
+            // console.log(this.t)
         },
         //取消
-        cancel(){
+        cancel() {
             this.dialogVisible = false
             this.t = {}
         },
         //确认
-        affirm(){
-            console.log(this.t)
+        affirm() {
+            if (Object.keys(this.t).length == 0) {
+                this.dialogVisible = false
+                this.t = {}
+                return false
+            }
             let j = []
             Object.keys(this.t).forEach(i => {
                 this.t[i].forEach(ii => {
@@ -461,7 +531,7 @@ export default {
                     j.push(ii)
                 })
             })
-            post_data({'data': j})
+            post_data({ 'data': j })
                 .then(data => {
                     this.$message({
                         message: '保存成功',
@@ -470,11 +540,56 @@ export default {
                     })
                     this.dialogVisible = false
                     this.t = {}
+                    this.num['营销部'] = 0
+                    this.num['市场部'] = 0
+                    this.num['产品部'] = 0
+                    this.num['人事部'] = 0
+                    this.num['研发部'] = 0
+                    this.num['设计部'] = 0
+                    this.num['后勤部'] = 0
                 })
                 .catch(err => {
                     this.$message.error('保存失败')
                     console.log('保存失败' + err)
                 })
+        },
+        back_(ii) {
+            // let u = this.t[ii.department].findIndex((currentVal) => {
+            //     return currentVal.id == ii.id
+            // })
+            let back_ = ii.root,                        //退回到的位置
+                to_ = ii.department,                    //现位置
+                acc_ = ii.account,                      //帐号
+                i_ = JSON.parse(JSON.stringify(ii)),    //需要移动的数据组
+                index_to = this.users[to_].findIndex((currentVal) => {
+                    return currentVal.account == acc_
+                })
+            i_.department = back_
+            delete i_.revise
+            // console.log(i_)
+            this.users[to_].splice(index_to, 1)
+            this.users[back_].push(i_)
+            this.t = {}
+            // console.log(this.num[to_])
+            this.num[to_]--
+            // console.log(ii)
+            // console.log(i_)
+            // console.log(this.t)
+            Object.keys(this.users).forEach((currentVal, index, arr) => {
+                this.users[currentVal].forEach((currentVal_, index_, arr_) => {
+                    let s = this.data[currentVal].find((currentVal_i, index_i, arr_i) => {
+                        return currentVal_i.account == currentVal_.account
+                    })
+                    if (!s) {
+                        currentVal_.reason = 'begin'
+                        if (this.t[currentVal_.department]) {
+                            this.t[currentVal_.department].push(currentVal_)
+                        } else {
+                            this.t[currentVal_.department] = [currentVal_]
+                        }
+                    }
+                })
+            })
         }
     },
     created() {
@@ -496,7 +611,7 @@ export default {
                 //         currentval_.revise = false
                 //     })
                 // })
-                
+
             })
             .catch(err => {
                 this.data = JSON.parse(JSON.stringify(this.users))
@@ -558,6 +673,9 @@ export default {
                 }
             }
         }
+        .pitch_on .item {
+            background-color: #89a;
+        }
     }
     .department_ {
         padding: 20px;
@@ -618,18 +736,20 @@ export default {
             list-style: none;
             line-height: 2.4em;
         }
-        .tit{
+        .tit {
             font-weight: 600;
-
         }
     }
 }
 
+/deep/ .el-icon-delete-solid {
+    cursor: pointer;
+}
 /deep/ .el-tabs__content {
     height: 100%;
     overflow-y: auto;
 }
-.d::-webkit-scrollbar, 
+.d::-webkit-scrollbar,
 /deep/ .el-tabs__content::-webkit-scrollbar {
     /*滚动条整体样式*/
     width: 8px; /*高宽分别对应横竖滚动条的尺寸*/

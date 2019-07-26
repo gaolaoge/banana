@@ -112,7 +112,7 @@
                         <el-button
                             type="danger"
                             size="small"
-                            v-on:click="delete(scope.row)"
+                            v-on:click="delete_(scope.$index,scope.row)"
                         >删除</el-button>
                     </template>
                 </el-table-column>
@@ -134,7 +134,8 @@
 <script>
 
 import {
-    search_
+    search_,
+    de_
 } from '@/api/api_base'
 
 export default {
@@ -153,11 +154,14 @@ export default {
     },
     methods: {
         //每页显示多少条数据
-        handleSizeChange(val) {
-            search_(`name=${this.search_input}&page_num=${this.list_type.page_num}&show_num=${val}`)
+        handleSizeChange(val,t_) {
+            if(t_ == null){
+                t_ = this
+            }
+            search_(`name=${t_.search_input}&page_num=${t_.list_type.page_num}&show_num=${val}`)
             .then(data => {
-                this.tableData = data.data[0]
-                this.length_ = data.data[1]
+                t_.tableData = data.data[0]
+                t_.length_ = data.data[1]
             })
         },
         //翻页
@@ -170,36 +174,32 @@ export default {
         },
         //查看
         check(z) {
-            // console.log(z)
-            // let e = {
-            //     name: z.enterpriseName,
-            //     id: z.id,
-            //     firmKEY: z.firmKEY,
-            //     type:'check'
-            // }
             this.$store.commit('detail_e',[z.enterpriseName,z.id,z.firmKEY,'check'])
             this.$router.push('/super_admin/detail_')
         },
         //编辑
         edit_(z) {
-            // console.log(z)
-            let e = {
-                name: z.enterpriseName,
-                id: z.id,
-                firmKEY: z.firmKEY,
-                type:'edit'
-            }
+            this.$store.commit('detail_e',[z.enterpriseName,z.id,z.firmKEY,'edit'])
             this.$router.push('/super_admin/detail_')
         },
         //删除
-        delete(z) {
-            // console.log(z)
-            let e = {
-                name: z.enterpriseName,
-                id: z.id,
-                firmKEY: z.firmKEY,
-                type:'delete'
-            }    
+        delete_(i,z) {
+            de_({'data': z.firmKEY})
+                .then(data => {
+                    // console.log(data.data)
+                    if(data.data == 1){
+                        this.$message({
+                            message: '删除成功',
+                            type: 'success',
+                            center: true
+                        })
+                        let self_ = this
+                        this.$options.methods.handleSizeChange(self_.list_type.show_num,self_)
+                    }
+                })
+                .catch(err => {
+                    console.log(err)
+                })
         },
         //检索
         search_() {
@@ -241,6 +241,7 @@ export default {
         search_(s)
             .then(data => {
                 this.tableData = data.data[0]
+                console.log(this.tableData)
                 this.length_ = data.data[1]
             })
             .catch(err => {

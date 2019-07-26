@@ -579,7 +579,7 @@ export default {
                 name: '',
                 account: '',
                 role: '',
-                value: [],
+                value: 1,
                 section: '',
                 marks: {
                     0: '0GB',
@@ -592,9 +592,8 @@ export default {
                 type: '',
                 section: '',
                 role: '用户',
-                value: [],
+                value: 1,
                 section: '',
-                // name: '',
                 marks: {
                     0: '0GB',
                     500: '0.5T',
@@ -623,8 +622,10 @@ export default {
                         center: true
                     })
                     this.dialog_two = false
+                    this.$options.methods.load_again(this);
                 })
                 .catch(err => {
+                    console.log(err)
                     this.$message.error('修改失败')
                 })
         },
@@ -655,6 +656,7 @@ export default {
                             center: true
                         })
                         this.dialog_one = false
+                        this.$options.methods.load_again(this);
                     } else if (data.data == 0) {
                         this.$message.error('该账号已存在,无法重复添加')
                     }
@@ -680,11 +682,13 @@ export default {
                             center: true
                         })
                         this.dialog_one = false
+                        this.$options.methods.load_again(this);
                     } else {
                         this.$alert(data.data.join(' , '), '重复账号', {
                             confirmButtonText: '确定',
                         });
                         this.$message.error('部分新建账号账号已存在,无法重复添加')
+                        this.dialog_one = false
                     }
                 })
                 .catch(err => {
@@ -726,9 +730,10 @@ export default {
                                     this.tableData = data.data[0]
                                     this.table_info.data_all = data.data[1]
                                     this.call_back = true
+                                    this.$options.methods.load_again(this);
                                 })
                         } else {
-                            // this.$options.methods.load_again();
+                            // this.$options.methods.load_again(this);
                             let val_sea = `data=1&page_num=${this.table_info.page_num}&branch=''&user_name=''&part=''&limit=''`
                             table_initial(val_sea)
                                 .then(data => {
@@ -913,19 +918,19 @@ export default {
                 })
         },
         //无附加条件渲染table
-        load_again() {
-            this.table_info.data = 1
-            this.table_info.page_num = 10
-            this.formInline.branch = ''
-            this.formInline.user = ''
-            this.formInline.part = ''
-            this.formInline.limit = ''
-            let val_sea = `data=1&page_num=10&branch=''&user_name=''&part=''&limit=''`
+        load_again(R) {
+            R.table_info.data = 1
+            R.table_info.page_num = 10
+            R.formInline.branch = ''
+            R.formInline.user = ''
+            R.formInline.part = ''
+            R.formInline.limit = ''
+            let val_sea = `data=1&page_num=10&branch=&user_name=&part=&limit=`
             table_initial(val_sea)
                 .then(data => {
-                    this.tableData = data.data[0]
-                    this.table_info.data_all = data.data[1]
-                    this.call_back = false
+                    R.tableData = data.data[0]
+                    R.table_info.data_all = data.data[1]
+                    R.call_back = false
                 })
         }
     },
@@ -937,7 +942,7 @@ export default {
     },
     created() {
         //无附加条件渲染table
-        this.load_again()
+        this.load_again(this)
     }
 }
 </script>
@@ -984,7 +989,7 @@ export default {
     float: left;
 } */
 .zx {
-    height: 272px;
+    height: 231px;
     overflow-y: scroll;
 }
 .zx::-webkit-scrollbar {

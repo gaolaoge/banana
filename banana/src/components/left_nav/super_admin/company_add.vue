@@ -266,13 +266,24 @@ export default {
                 this.$message.error('表单需填写完整')
                 return false
             }
-            if(this.form_user.password != this.form_user.password_){
+            if (this.form_user.password != this.form_user.password_) {
                 this.$message.error('两次密码输入不统一')
                 return false
             }
             admin_({ 'data': this.form_user })
                 .then(data => {
-                    console.log()
+                    if (data.data == 0) {
+                        this.$message.error('添加帐号已存在，提交失败')
+                    } else {
+                        this.$message({
+                            message: '添加成功',
+                            type: 'success',
+                            center: true
+                        })
+                        setTimeout(() => {
+                            this.$router.push('/super_admin/company_list')
+                        }, 1000)
+                    }
                 })
                 .catch(err => {
 
@@ -317,7 +328,7 @@ export default {
                 //开通容量item
                 margin-bottom: 54px;
             }
-            .m{
+            .m {
                 position: absolute;
                 left: 340px;
                 top: 0px;

@@ -108,15 +108,27 @@
                                                 xlink:href="#text"
                                                 fill="#2bd1fc"
                                             /> <!-- 背景 -->
-
+                                            <!-- 底色 -->
+                                            <rect
+                                                class="water-fill"
+                                                mask="url(#text-mask)"
+                                                fill="#a55d4c"
+                                                x="0"
+                                                y="105"
+                                                width="209.59"
+                                                height="209.59"
+                                                opacity="1"
+                                            >
+                                            </rect>
+                                            
                                             <rect
                                                 class="water-fill"
                                                 mask="url(#text-mask)"
                                                 fill="url(#water)"
                                                 x="-300"
-                                                y="80"
+                                                y="90"
                                                 width="1200"
-                                                height="120"
+                                                height="100"
                                                 opacity="0.3"
                                             >
                                                 <animate
@@ -132,9 +144,9 @@
                                                 class="water-fill"
                                                 mask="url(#text-mask)"
                                                 fill="url(#water)"
-                                                y="80"
+                                                y="100"
                                                 width="1600"
-                                                height="200"
+                                                height="100"
                                                 opacity="0.3"
                                             >
                                                 <animate
@@ -153,7 +165,7 @@
                                                 fill="url(#water)"
                                                 y="80"
                                                 width="800"
-                                                height="200"
+                                                height="100"
                                                 opacity="0.3"
                                             >
                                                 <animate
@@ -165,13 +177,14 @@
                                                     dur="1.4s"
                                                 />
                                             </rect>
+                                            <!-- 第一层 -->
                                             <rect
                                                 class="water-fill"
                                                 mask="url(#text-mask)"
                                                 fill="url(#water)"
-                                                y="100"
+                                                y="94"
                                                 width="2000"
-                                                height="200"
+                                                height="100"
                                                 opacity="0.9"
                                             >
                                                 <animate
@@ -191,6 +204,12 @@
                                     />
                                 </svg>
                             </article>
+                            <p class="h">
+                                {{ svg_.totalSpace }}GB
+                            </p>
+                            <p class="h l">
+                                {{ svg_.usedSpace }}GB
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -245,7 +264,9 @@
 
 <script>
 
-import { post_memory } from '@/api/api_base'
+import {
+    post_memory,
+    eochSpace} from '@/api/api_base'
 
 export default {
     name: 'memory_management',
@@ -306,21 +327,32 @@ export default {
                     val: 'other',
                     label: '其他'
                 },
-            ]
+            ],
+            svg_: {
+                totalSpace: 0,
+                usedSpace: 0,
+                percentage: 0
+            }
         }
     },
     methods: {
         //发送数据
         onSubmit() {
             let j = this.form_
-            post_memory({'data': j})
+            post_memory({ 'data': j })
                 .then(data => {
 
                 })
                 .catch(err => {
 
                 })
-        }
+        },
+    },
+    created() {
+        eochSpace({ 'data': 'data' })
+            .then(data => {
+                this.svg_ = data.data
+            })
     }
 }
 </script>
@@ -374,14 +406,28 @@ export default {
                         z-index: 999;
                         margin: 10px 0px 0px 10px;
                     }
+                    .h {
+                        position: absolute;
+                        left: 108px;
+                        color: #fff;
+                        font-weight: 800;
+                        z-index: 999;
+                        font-size: 22px;
+                        line-height: 100px;
+                        width: 120px;
+                        text-align: center;
+                    }
+                    .l {
+                        top: 276px;
+                    }
                 }
             }
-            .z{
-                    font-weight: 900;
-                    text-align: center;
-                    margin-top: 30px;
-                    font-size: 18px;
-                }
+            .z {
+                font-weight: 900;
+                text-align: center;
+                margin-top: 30px;
+                font-size: 18px;
+            }
         }
         .form_ {
             background: #eee;
@@ -391,7 +437,7 @@ export default {
             width: 540px;
             border-radius: 12px;
             padding: 40px;
-            .s{
+            .s {
                 text-align: center;
                 color: #f40;
             }
