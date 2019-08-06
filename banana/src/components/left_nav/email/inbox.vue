@@ -18,13 +18,32 @@
                             icon="el-icon-star-on"
                             v-on:click="inbox_count('标星箱')"
                         >标星箱</el-button>
-                        <el-button v-on:click="inbox_count('自定义')">自定义</el-button>
+                        <!-- <el-button v-on:click="cust_">自定义</el-button> -->
+                        <el-select
+                            v-model="remove_2"
+                            placeholder="自定义文件夹"
+                            @change="cust_"
+                        >
+                            <el-option
+                                v-for="item in search_.custom_folder2"
+                                :key="item.value"
+                                :label="item.label"
+                                :value="item.value"
+                            >
+                            </el-option>
+                        </el-select>
                         <el-button v-on:click="inbox_count('草稿箱')">草稿箱</el-button>
                         <el-button v-on:click="inbox_count('已发送')">已发送</el-button>
                         <el-button v-on:click="inbox_count('已删除')">已删除</el-button>
                     </nav>
                 </div>
                 <div class="f">
+                    <el-button
+                        v-on:click="customize_management"
+                        v-show="customize == true"
+                        icon="el-icon-setting"
+                        class="management_"
+                    >管理</el-button>
                     <el-radio-group
                         v-model="search_.radio"
                         v-on:change="d"
@@ -35,7 +54,7 @@
                         <el-radio label="3">未读</el-radio>
                     </el-radio-group>
                     <div class="operate_">
-                        <el-button v-on:click="search_s()">当前页标示已读</el-button>
+                        <el-button v-on:click="readed()">当前页标示已读</el-button>
                         <!-- <el-button v-on:click="search_s()">全选</el-button> -->
                         <el-button v-on:click="toggleSelection()">反选</el-button>
                         <el-button v-on:click="move('已删除')">删除</el-button>
@@ -45,7 +64,7 @@
                     <el-select
                         v-model="labeled_"
                         placeholder="标记为"
-                        @change="s"
+                        @change="sign_i"
                     >
                         <el-option
                             v-for="item in search_.oo"
@@ -59,9 +78,10 @@
                     <el-select
                         v-model="remove_"
                         placeholder="移动至"
+                        @change="move_custom"
                     >
                         <el-option
-                            v-for="item in search_.ot"
+                            v-for="item in search_.custom_folder"
                             :key="item.value"
                             :label="item.label"
                             :value="item.value"
@@ -78,6 +98,7 @@
                     class="table_"
                     @selection-change="handleSelectionChange"
                     @row-click="check_mail"
+                    :row-class-name="tableRowClassName"
                     ref="multipleTable"
                 >
                     <el-table-column
@@ -141,9 +162,9 @@
                     <el-pagination
                         @size-change="handleSizeChange"
                         @current-change="handleCurrentChange"
-                        :current-page="2"
+                        :current-page="list_type.page_num"
                         :page-sizes="[10, 20, 30, 40]"
-                        :page-size="1"
+                        :page-size="list_type.show_num"
                         layout="total, sizes, prev, pager, next, jumper"
                         :total="list_type.all_"
                     >
@@ -158,20 +179,102 @@
             width="1300px"
         >
             <div class="k">
-                <envelope v-bind:envelope_text="d_"></envelope>
+                <envelope
+                    :all_data="table_"
+                    :envelope_text="d_"
+                    :options_="search_.custom_folder"
+                    @reset="reset_()"
+                    @reset_="inbox_count()"
+                ></envelope>
             </div>
         </el-dialog>
+        <!-- {{ multipleSelection }} -->
+        <el-dialog
+            title="文件夹管理"
+            :visible.sync="management_"
+        >
+            <el-button
+                class="management_create"
+                v-on:click="create_folder"
+                type="primary"
+                plain
+            >新建文件夹</el-button>
+            <el-table
+                :data="table_management"
+                stripe
+                style="width: 100%"
+            >
+                <el-table-column
+                    prop="dirName"
+                    label="文件夹"
+                >
+                </el-table-column>
+                <el-table-column
+                    prop="examine"
+                    label="未读消息"
+                    width="180"
+                    align="center"
+                >
+                </el-table-column>
+                <el-table-column
+                    prop="count"
+                    label="总消息"
+                    width="180"
+                    align="center"
+                >
+                </el-table-column>
+                <el-table-column
+                    fixed="right"
+                    label="操作"
+                    width="220"
+                    align="center"
+                >
+                    <template slot-scope="scope">
+                        <el-button
+                            @click="input_newName(scope.row,'改名')"
+                            type="text"
+                            size="small"
+                        >改名</el-button>
+                        <el-button
+                            @click="management_dia(scope.row,'清空')"
+                            type="text"
+                            size="small"
+                        >清空</el-button>
+                        <el-button
+                            @click="management_dia(scope.row,'删除')"
+                            type="text"
+                            size="small"
+                        >删除</el-button>
+                    </template>
+                </el-table-column>
+            </el-table>
+            <el-pagination
+                @current-change="handleCurrentChange"
+                :current-page="1"
+                :page-sizes="[10, 20, 30, 40]"
+                :page-size="10"
+                layout="total, prev, pager, next, jumper"
+                :total="num_"
+                class="page_"
+            >
+            </el-pagination>
+        </el-dialog>
+        <!-- {{ table_ }} -->
     </div>
 </template>
 
 <script>
 
-import {    
+import {
     inbox_count,
     star_,
     delete_and_move,
     delete_t,
-    sign_
+    sign_,
+    customize_echo,
+    create_f,
+    customize_m,
+    sign_already
 } from '@/api/api_base'
 import envelope from '@/components/left_nav/email/envelope.vue'
 
@@ -179,38 +282,50 @@ export default {
     name: 'inbox',
     data() {
         return {
+            num_: 0,
+            table_management: [],                //自定义文件夹管理弹窗回显数据
+            gaoge: '',
+            management_: false,                  //自定义文件夹管理弹窗
+            customize: false,                    //自定义文件夹
             d_: '',
             search_: {
                 input: '',
                 radio: '1',
                 oo: [
                     {
-                        value: 'readed',
+                        value: '已读',
                         label: '已读'
                     },
                     {
-                        value: 'unread',
+                        value: '未读',
                         label: '未读'
                     },
                     {
-                        value: 'icon_',
+                        value: '标星',
                         label: '标星'
                     },
                 ],
-                ot: [
+                custom_folder: [],
+                custom_folder2: [
                     {
-                        value: 'readed',
-                        label: '屈臣氏'
-                    },
-                    {
-                        value: 'unread',
-                        label: '信用卡'
-                    },
-                    {
-                        value: 'icon_',
-                        label: '沃尔玛'
-                    },
+                        value: '全部',
+                        label: '全部'
+                    }
                 ],
+                // ot: [
+                //     {
+                //         value: 'readed',
+                //         label: '屈臣氏'
+                //     },
+                //     {
+                //         value: 'unread',
+                //         label: '信用卡'
+                //     },
+                //     {
+                //         value: 'icon_',
+                //         label: '沃尔玛'
+                //     },
+                // ],
             },
             table_: [
                 {
@@ -218,8 +333,9 @@ export default {
                     emailMotif: '申请容量',
                     sendTime: '2018-11-21 13：50',
                     star: 0,
-                    count: false,
-                    Examine: 'Y'                            //已读或未读
+                    // count: false,
+                    Examine: 'Y',                           //已读或未读
+                    id: null,
                 },
             ],
             list_type: {
@@ -231,13 +347,175 @@ export default {
             },
             labeled_: '',
             remove_: '',
+            remove_2: '',
             multipleSelection: [],                          //多选已选中项
             lock: true,
             text_: false,                                   //弹出层
         }
-
     },
     methods: {
+        tableRowClassName({row,rowIndex}){
+            row.index = rowIndex
+        },
+        //子集删除消息
+        reset_(){
+            this.text_ = false
+            this.inbox_count()
+        },
+        //移动至自定义文件夹
+        move_custom() {
+            this.move(this.remove_)
+        },
+        //标记为
+        sign_i(v) {
+            let t = [],
+                self_ = this
+            this.multipleSelection.forEach(currentVal => {
+                t.push(currentVal.id)
+            })
+            console.log({ 'data': t, 'action': v })
+            sign_already({ 'data': t, 'action': v })
+                .then(data => {
+                    if (data.data == 1) {
+                        self_.$message({
+                            message: '标记成功',
+                            type: 'success'
+                        })
+                        self_.inbox_count()
+                        self_.labeled_ = ''
+                    }
+                })
+                .catch(err => {
+
+                })
+        },
+        //当前页标记为已读
+        readed() {
+            let t = [],
+                self_ = this
+            this.table_.forEach(currentVal => {
+                t.push(currentVal.id)
+            })
+            sign_already({ 'data': t, 'action': '已读' })
+                .then(data => {
+                    if (data.data == 1) {
+                        self_.$message({
+                            message: '标记成功',
+                            type: 'success'
+                        })
+                        self_.inbox_count()
+                    }
+                })
+                .catch(err => {
+
+                })
+        },
+        //改名
+        input_newName(in_, an_) {
+            let self_ = this
+            this.$prompt('命名为新名称', '修改', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+            })
+                .then(val => {
+                    self_.management_dia(in_, an_, val)
+                })
+                .catch(() => {
+                    self_.$message({
+                        type: 'info',
+                        message: '取消修改'
+                    })
+                })
+        },
+        //新建文件夹
+        create_folder() {
+            let self_ = this
+            this.$prompt('新建文件夹', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+            })
+                .then(({ value }) => {
+                    create_f({ 'data': value })
+                        .then(data => {
+                            self_.$message({
+                                type: 'success',
+                                message: '创建成功'
+                            });
+                            self_.customize_management()
+                        })
+                        .catch(err => {
+
+                        })
+                })
+                .catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '取消创建'
+                    });
+                });
+        },
+        management_dia(in_, an_, v) {
+            let n = {
+                'name': in_.dirName,
+                'action': an_
+            }
+            if (v) {
+                n.new_name = v
+            }
+            customize_m({ 'data': n })
+                .then(data => {
+                    this.customize_management()
+                    // alert(an_)
+                    if (v) {
+                        this.$message({
+                            message: '修改成功',
+                            type: 'success'
+                        })
+                    } else if (an_ == '删除') {
+                        this.$message({
+                            message: '删除成功',
+                            type: 'success'
+                        })
+                    } else {
+                        this.$message({
+                            message: '清空成功',
+                            type: 'success'
+                        })
+                    }
+                })
+        },
+        //自定义文件夹管理
+        customize_management() {
+            customize_echo()
+                .then(data => {
+                    // console.log(data)/
+                    this.table_management = data.data[0]
+                    this.num_ = Number(data.data[1])
+                })
+                .catch(err => {
+
+                })
+            this.management_ = true
+        },
+        //自定义 
+        cust_() {
+            this.inbox_count('自定义', this.callback)
+            this.customize = true
+
+        },
+        //自定义筛选
+        callback() {
+            if (this.remove_2 != '全部') {
+                let y = this.remove_2,
+                    c = this.table_.filter((currentVal) => {
+                        if (currentVal.dirName == y) {
+                            return currentVal
+                        }
+                    })
+                this.table_ = c
+                console.log(this.table_)
+            }
+        },
         //标记为
         s(y) {
             if (this.multipleSelection.length == 0) {
@@ -252,7 +530,6 @@ export default {
                 .catch(err => {
 
                 })
-            // console.log(y)
         },
         //彻底删除
         detele_true() {
@@ -289,6 +566,7 @@ export default {
         },
         //查看邮件
         check_mail(x) {
+            console.log(x.index)
             if (this.lock) {
                 this.d_ = x
                 this.text_ = true
@@ -298,13 +576,21 @@ export default {
         },
         //删除加移动至文件夹
         move(destination) {
+            let self_ = this
             if (this.multipleSelection.length == 0) {
                 return false
             }
             delete_and_move({ 'data': this.multipleSelection, 'destination': destination })
                 .then(data => {
-                    console.log(data)
-                    // this.inbox_count()
+                    // console.log(data)
+                    if (data.data == 1) {
+                        self_.$message({
+                            message: '移动成功',
+                            type: 'success'
+                        })
+                        self_.inbox_count()
+                        self_.remove_ = ''
+                    }
                 })
                 .catch(err => {
 
@@ -313,17 +599,14 @@ export default {
         //多选
         handleSelectionChange(v) {
             this.multipleSelection = v
+            this.remove_ = ''
         },
         //反选
         toggleSelection() {
-            // if (rows) {
             var self_ = this
             this.table_.forEach(row => {
                 self_.$refs.multipleTable.toggleRowSelection(row);
             });
-            // } else {
-            //     this.$refs.multipleTable.clearSelection();
-            // }
         },
         //样式
         style() {
@@ -331,28 +614,41 @@ export default {
         },
         //标星
         star_sign(z) {
+            let self_ = this
             this.lock = false
             z.count = !z.count
             if (z.count == false) {
                 z.star = 0
+            }else{  
+                z.star = 1  
             }
+            console.log(z)
+            // if(z.star == 1){
+            //     z.star = 0
+            // }else{
+            //     z.star = 1  
+            // }
             star_({ 'data': z })
                 .then(data => {
-
+                    self_.inbox_count('标星箱')
                 })
                 .catch(err => {
 
                 })
             return false
         },
-        search_s() {
-            console.log()
+        // search_s() {
+        //     console.log()
+        // },
+        //当前页展示信息数量
+        handleSizeChange(z) {
+            this.list_type.show_num = z
+            this.inbox_count()
         },
-        handleSizeChange() {
-            console.log()
-        },
-        handleCurrentChange() {
-            console.log()
+        //跳转到目表页
+        handleCurrentChange(z) {
+            this.list_type.page_num = z
+            this.inbox_count()
         },
         //单选
         d(z) {
@@ -370,20 +666,47 @@ export default {
             this.inbox_count()
         },
         //回显数据 + 关键字查询
-        inbox_count(z) {
+        inbox_count(z, callbackFun) {
+            // alert('p')
+            this.customize = false
             if (z) {
                 this.list_type.folder = z
             }
-            let s = `name=${this.search_.input}&page_num=${this.list_type.page_num}&show_num=${this.list_type.show_num}&data=${this.list_type.folder}&examine=${this.list_type.examine}`
+            let s = `name=${this.search_.input}&page_num=${this.list_type.page_num}&show_num=${this.list_type.show_num}&data=${this.list_type.folder}&examine=${this.list_type.examine}`,
+                self_ = this
             inbox_count(s)
                 .then(data => {
-                    console.log(data)
+                    switch (z) {
+                        case '收件箱':
+                        case '标星箱':
+                        case '草稿箱':
+                        case '已发送':
+                        case '已删除':
+                            this.remove_2 = ''
+                    }
                     this.table_ = data.data[0].map((currentVal) => {
-                        currentVal.star = 0
                         currentVal.count = false
+                        currentVal.star = Number(currentVal.star)
                         return currentVal
                     })
                     this.list_type.all_ = data.data[1]
+                    this.search_.custom_folder2 = [{
+                        'value': '全部',
+                        'label': '全部'
+                    }]
+                    this.search_.custom_folder = data.data[2].map(currentVal => {
+                        self_.search_.custom_folder2.push({
+                            'value': currentVal.customDirname,
+                            'label': currentVal.customDirname
+                        })
+                        return {
+                            'value': currentVal.customDirname,
+                            'label': currentVal.customDirname
+                        }
+                    })
+                    if (callbackFun) {
+                        callbackFun()
+                    }
                 })
                 .catch(err => {
 
@@ -443,5 +766,15 @@ export default {
 }
 /deep/ .el-dialog__body {
     padding: 0px 20px;
+}
+.management_ {
+    margin-right: 22px;
+}
+.page_ {
+    text-align: center;
+    padding: 22px 0px;
+}
+.management_create {
+    float: right;
 }
 </style>

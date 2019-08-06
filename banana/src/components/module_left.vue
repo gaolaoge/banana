@@ -236,7 +236,7 @@ export default {
             message_management: '消息清理管理',
             date_management: '存储时间管理',
             announcement_management: '公告管理',
-            download_management: '下载管理',
+            download_management: '数据下载管理',
             data_analysis: '数据分析',
             address_book: '企业通讯录',
             Dashboard: '企业仪表盘',

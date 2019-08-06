@@ -1,13 +1,12 @@
 <template>
     <div>
         <div class="header">
-            <el-button>返回</el-button>
-            <el-button>回复</el-button>
-            <el-button>删除</el-button>
-            <el-button>彻底删除</el-button>
+            <el-button v-on:click="move('已删除')">删除</el-button>
+            <el-button @click="detele_true">彻底删除</el-button>
             <el-select
                 v-model="value"
                 placeholder="请选择"
+                @change="sign_i"
             >
                 <el-option
                     v-for="item in options"
@@ -20,6 +19,7 @@
             <el-select
                 v-model="value_"
                 placeholder="移动至"
+                @change="move"
             >
                 <el-option
                     v-for="item in options_"
@@ -32,6 +32,7 @@
             <el-button
                 type="warning"
                 class="b"
+                @click="immediate()"
             >立即处理</el-button>
         </div>
         <div class="tit">
@@ -64,6 +65,7 @@
                         src="@/assets/beizhu.svg"
                         alt=""
                         class="i"
+                        @click="remarks_"
                     >
                 </el-tooltip>
                 <el-tooltip
@@ -96,12 +98,19 @@
             class="a"
             v-bind:class="{h: !quill}"
         >
-            <pre>{{ envelope_text.emailDetails }}{{ t }}</pre>
+            <pre
+                v-html="envelope_text.emailDetails"
+                class="pre_"
+            >
+                <!-- {{ envelope_text.emailDetails }} -->
+                <!-- {{ t }} -->
+            </pre>
         </article>
         <div class="in_">
             <el-input
                 class="inp_"
-                v-model="content"
+                v-model="content_inp"
+                v-on:focus="quill = true"
             ></el-input>
             <el-tooltip
                 class="item"
@@ -120,12 +129,16 @@
                     </i>
                 </div>
             </el-tooltip>
-            <el-button class="butto_">提交</el-button>
+            <el-button
+                class="butto_"
+                v-on:click="response_"
+            >提交</el-button>
         </div>
         <transition name="el-zoom-in-bottom">
             <div
                 class="quill_editor"
                 v-show="quill"
+                v-bind:class="{'fullSreen': fullSreen}"
             >
                 <quill-editor
                     v-model="content"
@@ -139,96 +152,287 @@
                 </quill-editor>
                 <div class="bt_">
                     <!-- <button v-on:click="saveHtml">保存</button> -->
-                    <el-button v-on:click="quill = false">切换回快捷模式</el-button>
-                    <el-button>提交 </el-button>
+                    <el-button
+                        v-on:click="quill = false"
+                        class="back_quill"
+                    >返回</el-button>
+                    <el-button
+                        v-on:click="fullSreen = true"
+                        v-show="fullSreen != true"
+                    >输入框全屏展开</el-button>
+                    <el-button
+                        v-on:click="fullSreen = false"
+                        v-show="fullSreen == true"
+                    >收缩输入框</el-button>
+                    <el-button v-on:click="response_">提交 </el-button>
                 </div>
             </div>
         </transition>
         <!-- {{ envelope_text }} -->
         <div
-            
             class="nav"
             v-bind:class="{nav_: quill}"
         >
-            <span>上一封</span>
+            <span>
+                上一封
+                <span>
+                    {{  }}
+                </span>
+            </span>
             <span>下一封</span>
         </div>
+        <!-- 弹窗 -->
+        <el-dialog
+            title="修改"
+            :visible.sync="open_dialog"
+            width="30%"
+            append-to-body="true"
+        >
+            <el-form :model="change_limit">
+                <el-form-item
+                    label="账户："
+                    label-width="130px"
+                >
+                    <el-input
+                        v-bind:value="change_limit.account"
+                        style="width: 217px;"
+                        disabled
+                    ></el-input>
+                </el-form-item>
+                <el-form-item
+                    label="当前分配额度："
+                    label-width="130px"
+                >
+                    <el-input
+                        v-bind:value="change_limit.totalSpace"
+                        style="width: 217px;"
+                        disabled
+                    >
+                        <template slot="append">GB</template>
+                    </el-input>
+                </el-form-item>
+                <el-form-item
+                    label="添加额度："
+                    label-width="130px"
+                >
+                    <el-input
+                        v-model="space"
+                        style="width: 117px;"
+                        @input="space=space.replace(/[^\d]/g,'')"
+                    >
+                    </el-input>
+                    <el-select
+                        v-model="MGT"
+                        style="width: 96px;"
+                    >
+                        <el-option
+                            label="MB"
+                            value="MB"
+                        >
+                        </el-option>
+                        <el-option
+                            label="GB"
+                            value="GB"
+                        >
+                        </el-option>
+                        <el-option
+                            label="TB"
+                            value="TB"
+                        >
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+            </el-form>
+            <div
+                slot="footer"
+                class="dialog-footer"
+            >
+                <el-button
+                    type="primary"
+                    @click="add_more"
+                >确 定</el-button>
+            </div>
+        </el-dialog>
     </div>
 </template>
 
 <script>    
+
+import {
+    message_response,
+    delete_and_move,
+    delete_t,
+    sign_already,
+    immediate_treatment,
+    pu
+} from '@/api/api_base'
+
 export default {
     name: '',
     data() {
         return {
+            space: 0,
+            MGT: 'MB',
+            change_limit: {},                  //弹窗回显
+            open_dialog: false,                  //弹窗显示
+            fullSreen: false,
             quill: false,
-            content: `<p>hello world</p>`,
+            content: ``,
+            content_inp: ``,
             editorOption: {},
             value: '',
             value_: '',
             options: [{
-                value: 'Y',
+                value: '已读',
                 label: '已读'
             }, {
-                value: 'N',
+                value: '未读',
                 label: '未读'
             }, {
-                value: 'star',
+                value: '标星',
                 label: '标星'
             }],
-            options_: [{
-                value: '自定义箱1',
-                label: '自定义箱'
-            }, {
-                value: '自定义箱2',
-                label: '自定义箱'
-            }, {
-                value: '自定义箱3',
-                label: '自定义箱'
-            }],
-            t:
-                `7月19日，国家邮政局官方网站对外发布《智能快件箱寄递服务管理办法》。
-
-封面新闻记者注意到，根据该管理办法，智能快件箱使用企业使用智能快件箱投递快件，应当征得收件人同意；
-收件人不同意使用智能快件箱投递快件的，智能快件箱使用企业应当按照快递服务合同约定的名址提供投递服务。
-
-据了解，该办法将自2019年10月1日起施行国家邮政局有关负责人介绍，
-实践中，智能快件箱以其时间配置灵活、时效性高、私密性强等特点，逐步发展成为我国城市快递末端服务的重要组成部分。
-
-与此同时，智能快件箱寄递服务也存在着一些亟需解决的问题，
-如涉及的寄递流程较为复杂、操作环节较多、相关企业责任划分不清晰、收投服务不规范、用户权益难以得到充分保障、存在一定的安全隐患等。
-
-在此情况下，原有制度安排已不能满足智能快件箱寄递服务发展需求，有必要制定部门规章，理顺法律关系，
-明确服务规则、把好安全底线，促进快递末端服务持续健康发展，不断满足人民群众对智能快件箱寄递服务的新期待。
-
-为此，国家邮政局于2017年5月启动《智能快件箱寄递服务管理办法》制定工作，先后多次组织企业座谈、实地调研、专家研讨，并在起草过程中充分征求了相关企业、协会的意见建议。
-2018年1月，《智能快件箱寄递服务管理办法（征求意见稿）》通过中国政府法制信息网、交通运输部网站、国家邮政局网站公开征求意见。
-在此基础上，国家邮政局局长办公会议于2019年3月19日决定将《智能快件箱寄递服务管理办法（送审稿）》提请交通运输部审议。
-6月12日，交通运输部部务会议审议通过。
-
-据了解，《办法》根据企业从事的服务环节，将提供智能快件箱寄递服务的企业细化为智能快件箱运营企业、智能快件箱使用企业，
-要求运营企业和使用企业具备与快件收寄、投递业务相适应的服务能力。规定运营企业、使用企业符合快递业务经营许可条件的，按照有关规定申请快递业务经营许可。
-
-《办法》规定了收件人的相关权利，以及智能快件箱运营企业、使用企业的相关义务。
-要求企业使用智能快件箱投递快件应征得收件人同意，投递快件后应及时通知收件人。
-
-此外，《办法》紧密衔接收寄验视、实名收寄、过机安检三项制度。
-明确了企业在监控设备安装、寄件人身份查验、物品信息登记等方面的主体责任。
-细化了邮政管理部门的监督管理职责，并对企业违反相关规定的行为设置了相应法律责任。`
+            // options_: [],
+            show_index: null,             //显示数据是第几位
+            // data_list: null               //数据数组长度
+            // previous_: {},                 //上一组数据
+            // next_: null                    //下一组数据
         }
     },
     props: {
-        envelope_text: {
+        envelope_text: {                  //选中数据
             type: Object,
             required: true
+        },
+        options_: {                       //自定义文件夹
+            type: Array,
+            required: true
+        },
+        all_data: {                       //全部数据
+            type: Array,
+            required: true
         }
+    },
+    watch: {
+        content: function (n) {
+            this.content_inp = n.replace(/<\/?\w\W*>/g, '')
+        },
+        envelope_text: function(n){
+            this.show_index = n.index
+        },
+        // all_data: {
+        //     immediate: true,
+        //     handler: n => {
+        //         this.previous_ = n
+        //     }
+        // }
+        
     },
     computed: {
         editor() {
             return this.$refs.myQuillEditor.quill;
         },
+        previous_() {
+            // let f = this.show_index - 1
+            // return this.all_data[this.show_index - 1]
+            // return this.all_data[f]
+            // return this.all_data[0]
+        }
     },
     methods: {
+        //添加备注
+        remarks_(){
+            // console.log(this.show_index - 1)
+            // console.log(this.previous_)
+            // console.log(this.next_)
+            // console.log(this.previous_)
+        },
+        //添加额度
+        add_more(){
+            let self_ = this
+            pu({'account': this.change_limit.account,'oldValue':this.change_limit.KBTotal,'value': this.space,'unit': this.MGT})
+                .then(data => {
+                    if(data.data == 1){
+                        self_.$message({
+                            message: '操作成功',
+                            type: 'success'
+                        })
+                        self_.open_dialog = false
+                    }
+                })
+        },
+        //立即处理
+        immediate() {
+            let self_ = this
+            self_.open_dialog = true
+            immediate_treatment({ 'data': self_.envelope_text.id })
+                .then(data => {
+                    // console.log(data)
+                    self_.change_limit = data.data
+                    // self_.change_limit.KBTotal = 'oldValue'
+                    console.log(self_.change_limit)
+                })
+                .catch(err => {
+
+                })
+        },
+        //标记为
+        sign_i(v) {
+            let t = [],
+                self_ = this
+            t.push(self_.envelope_text.id)
+            console.log({ 'data': t, 'action': v })
+            sign_already({ 'data': t, 'action': v })
+                .then(data => {
+                    if (data.data == 1) {
+                        self_.$message({
+                            message: '标记成功',
+                            type: 'success'
+                        })
+                        // self_.inbox_count()
+                        // self_.labeled_ = ''
+                        self_.$emit('reset_')
+                    }
+                })
+                .catch(err => {
+
+                })
+        },
+        //彻底删除
+        detele_true() {
+            let self_ = this,
+                arr = []
+            this.$confirm('此操作不可回退, 是否继续?', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            })
+                .then(() => {
+                    arr.push(self_.envelope_text)
+                    delete_t({ 'data': arr })
+                        .then(data => {
+                            if (data.data == 1) {
+                                self_.$message({
+                                    message: '删除成功',
+                                    type: 'success',
+                                    center: true
+                                })
+                                self_.$emit('reset')
+                            }
+                        })
+                        .catch(err => {
+
+                        })
+                })
+                .catch(err => {
+                    alert(err)
+                    self_.$message({
+                        type: 'info',
+                        message: '已取消删除'
+                    });
+                });
+
+        },
         onEditorReady(editor) { // 准备编辑器
         },
         onEditorBlur() { }, // 失去焦点事件
@@ -236,7 +440,63 @@ export default {
         onEditorChange() { }, // 内容改变事件
         saveHtml: function (event) {
             alert(this.content);
-        }
+        },
+        // 消息回复
+        response_() {
+            if (!this.content_inp) {
+                this.$message.error('没有回复内容')
+                return false
+            }
+            let self_ = this
+            message_response({ 'data': this.content, 'id': this.envelope_text.id })
+                .then(data => {
+                    if (data.data == 1) {
+                        self_.fullSreen = false
+                        self_.content = ''
+                        self_.content_inp = ''
+                        self_.$message({
+                            message: '回复成功',
+                            type: 'success'
+                        })
+                    }
+                })
+                .catch(err => {
+
+                })
+        },
+        //移动至
+        move(destination) {
+            let self_ = this,
+                arr = [],
+                destination_ = destination || null
+            arr.push(self_.envelope_text)
+            if (destination == '已删除') {
+                this.$confirm('确认删除此条消息??', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                })
+                    .then(data => {
+                        g()
+                    })
+            } else {
+                destination_ = self_.value_
+                g()
+            }
+            function g() {
+                delete_and_move({ 'data': arr, 'destination': destination_ })
+                    .then(data => {
+                        // console.log(data)
+                        self_.$message({
+                            message: '操作成功',
+                            type: 'success'
+                        })
+                        if (destination == '已删除') {
+                            self_.$emit('reset')
+                        }
+                    })
+            }
+        },
     }
 }
 </script>
@@ -330,14 +590,22 @@ export default {
 .quill_editor {
     background: #fff;
     height: 190px;
+    transition: height 0.2s;
     .q {
         height: 100px;
+        transition: height 0.2s;
         // overflow-y: auto;
         resize: none;
     }
     .bt_ {
         text-align: right;
         margin-top: 52px;
+    }
+}
+.fullSreen.quill_editor {
+    height: 760px;
+    .q {
+        height: 670px;
     }
 }
 .nav {
@@ -357,5 +625,11 @@ export default {
 }
 .nav.nav_ {
     margin-top: 212px;
+}
+.back_quill {
+    float: left;
+}
+.pre_ {
+    white-space: pre-line;
 }
 </style>
