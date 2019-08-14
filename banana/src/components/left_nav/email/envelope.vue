@@ -94,6 +94,8 @@
                 </el-tooltip>
             </div>
         </div>
+        <!-- {{ envelope_text }} -->
+        <!-- {{ options_ }} -->
         <article
             class="a"
             v-bind:class="{h: !quill}"
@@ -103,6 +105,7 @@
                 class="pre_"
             >
                 <!-- {{ envelope_text.emailDetails }} -->
+                
                 <!-- {{ t }} -->
             </pre>
         </article>
@@ -168,7 +171,7 @@
                 </div>
             </div>
         </transition>
-        <!-- {{ envelope_text }} -->
+        
         <div
             class="nav"
             v-bind:class="{nav_: quill}"
@@ -283,13 +286,13 @@ export default {
             value: '',
             value_: '',
             options: [{
-                value: '已读',
+                value: 'Y',
                 label: '已读'
             }, {
-                value: '未读',
+                value: 'N',
                 label: '未读'
             }, {
-                value: '标星',
+                value: 'star',
                 label: '标星'
             }],
             // options_: [],
@@ -320,12 +323,13 @@ export default {
         envelope_text: function(n){
             this.show_index = n.index
         },
-        // all_data: {
-        //     immediate: true,
-        //     handler: n => {
-        //         this.previous_ = n
-        //     }
-        // }
+        envelope_text: {
+            immediate: true,
+            handler: function(n){
+                this.value = n.examine
+                this.value_ = n.dirName
+            }
+        }
         
     },
     computed: {

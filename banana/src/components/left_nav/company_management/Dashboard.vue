@@ -25,7 +25,7 @@
             </div>
             <p class="p_">剩余{{ base.unUsedSpace }}TB</p>
             <el-button
-                v-on:click="ataAnalysis"
+                v-on:click="$router.push('/company_management/data_analysis')"
                 class="btn_"
             >数据分析</el-button>
         </div>
@@ -70,11 +70,6 @@ export default {
                 unUsedSpace: '',
                 userTotal: '',
             }
-        }
-    },
-    methods: {
-        ataAnalysis() {
-
         }
     },
     created() {
@@ -140,7 +135,7 @@ export default {
         }
         .btn_ {
             float: right;
-            margin-top: 100px;
+            margin-top: 150px;
             margin-right: 220px;
         }
     }

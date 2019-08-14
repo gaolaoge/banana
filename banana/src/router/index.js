@@ -1,7 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import login_page from '@/components/login_page'
-// import forget_password from '@/components/forget_password'
 import main_module from '@/components/main_module'
 import storage_management from '@/components/left_nav/platform_management/storage_management'                   //数据存储管理
 import download_management from '@/components/left_nav/platform_management/download_management'                 //数据下载管理
@@ -25,7 +24,12 @@ import file_management from '@/components/left_nav/system/file_management'
 import message_management from '@/components/left_nav/system/message_management'
 import popular from '@/components/left_nav/log_retrieval/popular'
 import record from '@/components/left_nav/log_retrieval/record'
-import resources_management from '@/components/left_nav/resources_management/resources_management'
+import storage_base from '@/components/left_nav/resources_management/storage_base'
+import customize from '@/components/left_nav/resources_management/customize'
+import internal_interwork from '@/components/left_nav/resources_management/internal_interwork'
+import document_retrieval from '@/components/left_nav/resources_management/document_retrieval'
+import visual_analysis from '@/components/left_nav/resources_management/visual_analysis'
+import new_email from '@/components/left_nav/email/new_email'
 
 Vue.use(Router)
 
@@ -53,8 +57,24 @@ export default new Router({
       redirect: '/platform_management/storage_management',
       children: [
         {
-          path: '/resources_management/resources_management',                       //资源管理
-          component: resources_management
+          path: '/resources_management/storage_base',           //资源管理 - 固定存储/临时存储/共享文件
+          component: storage_base
+        },
+        {
+          path: '/resources_management/customize',             //资源管理 - 自定义
+          component: customize
+        },
+        {
+          path: '/resources_management/internal_interwork',    //资源管理 - 内部互通
+          component: internal_interwork
+        },
+        {
+          path: '/resources_management/document_retrieval',    //资源管理 - 文件检索
+          component: document_retrieval
+        },
+        {
+          path: '/resources_management/visual_analysis',       //资源管理 - 可视化分析
+          component: visual_analysis
         },
         {
           path: '/log_retrieval/popular',                       //数据存储管理
@@ -131,6 +151,10 @@ export default new Router({
         {
           path: '/message_center/inbox',                       //收件箱
           component: inbox
+        },
+        {
+          path: '/message_center/new_email',                       //写邮件
+          component: new_email
         },
         {
           path: '/system/date_management',                       //存储时间管理

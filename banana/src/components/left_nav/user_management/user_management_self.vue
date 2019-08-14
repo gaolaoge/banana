@@ -34,32 +34,10 @@
                                     placeholder="请选择活动区域"
                                 >
                                     <el-option
-                                        label="后勤部"
-                                        value="后勤部"
-                                    ></el-option>
-                                    <el-option
-                                        label="市场部"
-                                        value="市场部"
-                                    ></el-option>
-                                    <el-option
-                                        label="人事部"
-                                        value="人事部"
-                                    ></el-option>
-                                    <el-option
-                                        label="设计部"
-                                        value="设计部"
-                                    ></el-option>
-                                    <el-option
-                                        label="研发部"
-                                        value="研发部"
-                                    ></el-option>
-                                    <el-option
-                                        label="营销部"
-                                        value="营销部"
-                                    ></el-option>
-                                    <el-option
-                                        label="产品部"
-                                        value="产品部"
+                                        v-for="li_ in options"
+                                        :key="li_.label"
+                                        :label="li_.label"
+                                        :value="li_.value"
                                     ></el-option>
                                 </el-select>
                             </el-form-item>
@@ -260,8 +238,8 @@ export default {
             hint: {
                 state: 0
             },
-            show_step: 'fir'
-
+            show_step: 'fir',
+            options: [],            //部门
         }
     },
     components: {
@@ -426,6 +404,15 @@ export default {
                     this.$store.commit('change_head', data.data[0].headPortrait)
                 }
             })
+
+        //获取部门
+        const self_ = this
+        Object.keys(JSON.parse(sessionStorage.getItem('employees'))).forEach(currentVal => {
+            self_.options.push({
+                'value': currentVal,
+                'label': currentVal
+            })
+        })
     }
 }
 </script>

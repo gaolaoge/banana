@@ -165,7 +165,7 @@ export default {
     name: 'login_page',
     data() {
         return {
-            account: 'testfirm',
+            account: 'xf_admin',
             password: '0000',
             verify_input: '',
             remember_account: true,

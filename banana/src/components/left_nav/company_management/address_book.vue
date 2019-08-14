@@ -10,10 +10,12 @@
                                     企业通讯录
                                 </h3>
                             </header>
+                            <!-- {{users}} -->
                             <article>
                                 <el-button
                                     type="warning"
                                     class="button_"
+                                    @click="$router.push('/user_management/user_management_info')"
                                 >
                                     查看用户信息
                                 </el-button>
@@ -79,13 +81,19 @@
                                     <el-input
                                         class="input_"
                                         v-model="input"
-                                        placeholder="请输入内容"
+                                        placeholder="请输入姓名查询"
                                     ></el-input>
-                                    <el-button type="warning">
-                                        重置
+                                    <el-button
+                                        type="warning"
+                                        @click="s"
+                                    >
+                                        查询
                                     </el-button>
                                 </div>
-                                <div class="card_">
+                                <div
+                                    class="card_ margin_"
+                                    v-show="only_"
+                                >
                                     <div class="head_portrait">
                                         <img
                                             v-bind:src="card_.headPortrait"
@@ -118,6 +126,52 @@
                                         </ul>
                                     </div>
                                 </div>
+                                <div v-show="!only_">
+                                    <el-carousel
+                                        :interval="4000"
+                                        height="335px"
+                                    >
+                                        <el-carousel-item
+                                            v-for="(item,index) in cards_"
+                                            :key="index"
+                                            arrow="always"
+                                        >
+                                            <div class="card_">
+                                                <div class="head_portrait">
+                                                    <img
+                                                        v-bind:src="card_.headPortrait"
+                                                        alt=""
+                                                        class="img_"
+                                                    >
+                                                </div>
+                                                <div class="tex_">
+                                                    <ul>
+                                                        <li>
+                                                            <span class="tit_">姓名</span>
+                                                            <span>： {{ item.userName }}</span>
+                                                        </li>
+                                                        <li>
+                                                            <span class="tit_">部门</span>
+                                                            <span>： {{ item.department }}</span>
+                                                        </li>
+                                                        <li>
+                                                            <span class="tit_">角色</span>
+                                                            <span>： {{ item.position }}</span>
+                                                        </li>
+                                                        <li>
+                                                            <span class="tit_">内存大小</span>
+                                                            <span>： {{ item.totalSpace }}GB</span>
+                                                        </li>
+                                                        <li>
+                                                            <span class="tit_">内存剩余</span>
+                                                            <span>： {{ item.unusedSpace }}GB</span>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </el-carousel-item>
+                                    </el-carousel>
+                                </div>
                             </article>
                         </section>
                     </div>
@@ -129,8 +183,10 @@
 
 <script>
 
-import { mapState } from 'vuex'
-import { card_ } from '@/api/api_base'
+import {
+    card_,
+    name_s
+} from '@/api/api_base'
 
 export default {
     name: '',
@@ -144,23 +200,51 @@ export default {
                 totalSpace: 0,
                 unusedSpace: 0,
                 headPortrait: ''
-            }
+            },
+            users: [],
+            cards_: [],
+            only_: true
         }
     },
     computed: {
-        ...mapState(['users'])
     },
     methods: {
-        show_card(i){
-            card_({'id': i})
+        //姓名查询
+        s() {
+            let self_ = this
+            name_s({ 'userName': this.input })
                 .then(data => {
-                    console.log(data)
-                    Object.assign(this.card_,data.data)
+                    if (data.data.length == 0) {
+                        self_.$message({
+                            message: '未搜索到匹配项',
+                            type: 'warning'
+                        })
+                    } else if (data.data.length == 1) {
+                        self_.only_ = true
+                        Object.assign(self_.card_, data.data[0])
+                    } else {
+                        self_.only_ = false
+                        self_.cards_ = data.data
+                    }
+                    self_.input = ''
+                })
+                .catch(err => {
+
+                })
+        },
+        //员工信息获取
+        show_card(i) {
+            card_({ 'id': i })
+                .then(data => {
+                    Object.assign(this.card_, data.data)
                 })
                 .catch(err => {
 
                 })
         }
+    },
+    created() {
+        this.users = JSON.parse(sessionStorage.getItem('employees'))
     }
 }
 </script>
@@ -238,11 +322,14 @@ export default {
                     width: 300px;
                 }
             }
+            .margin_ {
+                margin: 56px auto;
+            }
             .card_ {
                 width: 662px;
                 height: 285px;
+                margin: 0px auto;
                 background: #f2f2f2;
-                margin: 56px auto;
                 box-shadow: 6px 6px 4px 1px #ccc;
                 .head_portrait {
                     float: left;
@@ -275,9 +362,13 @@ export default {
             }
         }
         .info_ {
-            border-left : 1px solid #aaa;
+            border-left: 1px solid #aaa;
             height: 600px;
         }
     }
+}
+/deep/ .el-carousel__button {
+    background: #ddd;
+    height: 3px;
 }
 </style>

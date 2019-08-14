@@ -1,13 +1,13 @@
 <template>
-    <div>
-        resources_management
+    <div class="visual_analysis">
+visual_analysis
     </div>
 </template>
 
 <script>
 export default {
-    name: '',
-    data() {
+    name: 'visual_analysis',
+    data(){
         return {
 
         }
@@ -16,4 +16,5 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
 </style>

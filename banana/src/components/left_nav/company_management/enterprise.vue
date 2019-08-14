@@ -61,6 +61,10 @@
                 <el-table
                     :data="tableData"
                     style="width: 100%"
+                    v-loading.fullscreen.lock="loading"
+                    element-loading-text="拼命加载中"
+                    element-loading-spinner="el-icon-loading"
+                    element-loading-background="rgba(0, 0, 0, 0.8)"
                 >
                     <el-table-column
                         fixed="left"
@@ -134,7 +138,7 @@
         <el-dialog
             title="文件预览"
             :visible.sync="dialogVisible"
-            width="30%"
+            width="90%"
             :before-close="path_t = null"
         >
             <img
@@ -151,6 +155,15 @@
             >
                 您的浏览器不支持 video 标签。
             </video>
+            <!-- {{pdf_src}} -->
+            <iframe
+                :src='pdf_src'
+                width='100%'
+                height='400px'
+                frameborder='1'
+                v-if="pdf"
+            >
+            </iframe>
         </el-dialog>
     </div>
 </template>
@@ -160,12 +173,18 @@
 import {
     data_enterprise,
     file_pre,
-    e_file_download} from '@/api/api_base'
+    e_file_download
+} from '@/api/api_base'
 
 export default {
     name: 'enterprise',
     data() {
         return {
+            loading: false,
+            pdf: false,
+            pdf_src: '',
+            pdf_srcO: '/static/pdf/web/viewer.html?file=',
+            pdf_srcT: '',
             // xx: '',
             dialogVisible: false,
             total: 10,
@@ -233,43 +252,30 @@ export default {
     methods: {
         //下载
         download_() {
+            this.loading = true
             let p = arguments[0],
                 name_ = p.fileName,
                 path_ = p.filePath,
                 self_ = this
-            // e_file_download({'name': name_,'path': path_})
-            //     .then(data => {
-            //         var binaryData = [],
-            //             t;
-            //         binaryData.push(data.data);
-            //         t = window.URL.createObjectURL(new Blob(binaryData, { type: "application/zip" }));
-
-            //         const a = document.createElement('a')
-            //         a.style.display = 'none'
-            //         a.download = '<文件名>'
-            //         a.href = t
-            //         a.click()
-            //         document.body.removeChild(a)
-            //     })
-            this.$axios.get(`${this.wangqiang}/company/enterpriseFile_download.do`,{
+            this.$axios.get(`${this.wangqiang}/company/enterpriseFile_download.do`, {
                 params: {
                     'name': name_,
                     'path': path_
                 }
             })
                 .then(data => {
-                    // console.log(data)
-                    var binaryData = [],
-                        t;
-                    binaryData.push(data.data);
-                    t = window.URL.createObjectURL(new Blob(binaryData, { type: "application/zip" }));
-
                     const a = document.createElement('a')
                     a.style.display = 'none'
-                    a.download = '<文件名>'
-                    a.href = t
+                    a.download = name_
+                    a.href = data.data
+                    a.target = '_blank'
+                    document.getElementsByClassName('wrapper')[0].append(a)
                     a.click()
-                    document.body.removeChild(a)
+                    // document.body.removeChild(a)
+                    self_.loading = false
+                })
+                .catch(err => {
+                    self_.loading = false
                 })
         },
         //预览
@@ -280,12 +286,19 @@ export default {
                 path_ = p.filePath,       //文件地址
                 self_ = this
             this.path_t = null            //文件预览地址
+            // console.log(path_)
+            // this.$showPDF(path_)
             // console.log({'name': name_,'path': path_})
             file_pre({ 'name': name_, 'path': path_ })
                 .then(data => {
-                    console.log(data)
-                    self_.path_t = data.data
-                    f()
+                    // console.log(data)
+                    // var PDFData = data.data.replace("data:application/pdf;base64,", "");
+                    // sessionStorage.setItem("_imgUrl", PDFData);
+                    // pageToUrl("page/pdf/viewer", true);
+                    self_.pdf_src = self_.pdf_srcO + data.data
+                    self_.dialogVisible = true
+                    self_.pdf = true
+                    // f()
                 })
                 .catch(err => {
 
@@ -303,7 +316,7 @@ export default {
                         break
                 }
             }
-            this.dialogVisible = true
+            // this.dialogVisible = true
 
         },
         //当页显示几条数据
@@ -378,5 +391,8 @@ export default {
         margin: 0px auto;
         display: block;
     }
+}
+body {
+    margin: 0;
 }
 </style>

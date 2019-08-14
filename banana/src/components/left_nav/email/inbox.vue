@@ -13,11 +13,15 @@
                         v-on:click="inbox_count()"
                     >搜索</el-button>
                     <nav>
-                        <el-button v-on:click="inbox_count('收件箱')">收件箱</el-button>
-                        <el-button
+                        <!-- <el-button
+                            v-on:click="inbox_count('收件箱')"
+                            :type="active_c == '收件箱'?'info': ''"
+                        >收件箱</el-button> -->
+                        <!-- <el-button
                             icon="el-icon-star-on"
                             v-on:click="inbox_count('标星箱')"
-                        >标星箱</el-button>
+                            :type="active_c == '标星箱'?'info': ''"
+                        >标星箱</el-button> -->
                         <!-- <el-button v-on:click="cust_">自定义</el-button> -->
                         <el-select
                             v-model="remove_2"
@@ -32,9 +36,18 @@
                             >
                             </el-option>
                         </el-select>
-                        <el-button v-on:click="inbox_count('草稿箱')">草稿箱</el-button>
-                        <el-button v-on:click="inbox_count('已发送')">已发送</el-button>
-                        <el-button v-on:click="inbox_count('已删除')">已删除</el-button>
+                        <!-- <el-button
+                            v-on:click="inbox_count('草稿箱')"
+                            :type="active_c == '草稿箱'?'info': ''"
+                        > 草稿箱</el-button>
+                        <el-button
+                            v-on:click="inbox_count('已发送')"
+                            :type="active_c == '已发送'?'info': ''"
+                        >已发送</el-button>
+                        <el-button
+                            v-on:click="inbox_count('已删除')"
+                            :type="active_c == '已删除'?'info': ''"
+                        >已删除</el-button> -->
                     </nav>
                 </div>
                 <div class="f">
@@ -259,7 +272,6 @@
             >
             </el-pagination>
         </el-dialog>
-        <!-- {{ table_ }} -->
     </div>
 </template>
 
@@ -282,6 +294,9 @@ export default {
     name: 'inbox',
     data() {
         return {
+            // url_: window.location.search,
+            n: null,
+            active_c: '收件箱',
             num_: 0,
             table_management: [],                //自定义文件夹管理弹窗回显数据
             gaoge: '',
@@ -289,6 +304,7 @@ export default {
             customize: false,                    //自定义文件夹
             d_: '',
             search_: {
+
                 input: '',
                 radio: '1',
                 oo: [
@@ -354,11 +370,11 @@ export default {
         }
     },
     methods: {
-        tableRowClassName({row,rowIndex}){
+        tableRowClassName({ row, rowIndex }) {
             row.index = rowIndex
         },
         //子集删除消息
-        reset_(){
+        reset_() {
             this.text_ = false
             this.inbox_count()
         },
@@ -373,7 +389,7 @@ export default {
             this.multipleSelection.forEach(currentVal => {
                 t.push(currentVal.id)
             })
-            console.log({ 'data': t, 'action': v })
+            // console.log({ 'data': t, 'action': v })
             sign_already({ 'data': t, 'action': v })
                 .then(data => {
                     if (data.data == 1) {
@@ -619,8 +635,8 @@ export default {
             z.count = !z.count
             if (z.count == false) {
                 z.star = 0
-            }else{  
-                z.star = 1  
+            } else {
+                z.star = 1
             }
             console.log(z)
             // if(z.star == 1){
@@ -671,6 +687,7 @@ export default {
             this.customize = false
             if (z) {
                 this.list_type.folder = z
+                this.active_c = z
             }
             let s = `name=${this.search_.input}&page_num=${this.list_type.page_num}&show_num=${this.list_type.show_num}&data=${this.list_type.folder}&examine=${this.list_type.examine}`,
                 self_ = this
@@ -711,10 +728,83 @@ export default {
                 .catch(err => {
 
                 })
+        },
+        //监听url
+        m() {
+            // alert('m')
+            let t = window.location.search.split('=')[1],
+                self_ = this
+            // n = null
+            switch (t) {
+                case ('inbox'):
+                    self_.n = '收件箱'
+                    self_.active_c = '收件箱'
+                    break;
+                case ('star_box'):
+                    self_.n = '标星箱'
+                    self_.active_c = '标星箱'
+                    break;
+                case ('draft_box'):
+                    self_.n = '草稿箱'
+                    self_.active_c = '草稿箱'
+                    break;
+                case ('send_box'):
+                    self_.n = '已发送'
+                    self_.active_c = '已发送'
+                    break;
+                case ('delete_box'):
+                    self_.n = '已删除'
+                    self_.active_c = '已删除'
+                    break;
+            }
+            this.inbox_count(this.n)
         }
     },
+    watch: {
+        $route: {
+            handler: function (val, oldVal) {
+                this.m()
+            },
+            // 深度观察监听
+            deep: true
+        }
+    },
+    // computed: {
+    //     r: () => {
+    //         // alert('t')
+    //         // return window.location.search.split('=')[1]
+    //         return window.location.href
+    //     }
+    // },
     created() {
-        this.inbox_count()
+        // let t = window.location.search.split('=')[1],
+        // self_ = this,
+        //     n = null
+        // switch(t){
+        //     case('inbox'): 
+        //         n =  '收件箱'
+        //         self_.active_c = '收件箱'
+        //         break;
+        //     case('star_box'): 
+        //         n =  '标星箱'
+        //         self_.active_c = '标星箱'
+        //         break;
+        //     case('draft_box'): 
+        //         n =  '草稿箱'
+        //         self_.active_c = '草稿箱'
+        //         break;
+        //     case('send_box'): 
+        //         n =  '已发送'
+        //         self_.active_c = '已发送'
+        //         break;
+        //     case('delete_box'): 
+        //         n =  '已删除'
+        //         self_.active_c = '已删除'
+        //         break;
+        // }
+        this.m()
+        this.inbox_count(this.n)
+        // window.onhashchange = this.m()
     },
     components: {
         envelope
@@ -735,7 +825,8 @@ export default {
             margin-bottom: 26px;
         }
         nav {
-            float: right;
+            float: left;
+            margin-right: 12px;
         }
         .f,
         .operate_ {

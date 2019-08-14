@@ -525,28 +525,7 @@ export default {
     name: 'user_management_info',
     data() {
         return {
-            options: [{                 //部门
-                value: '营销部',
-                label: '营销部'
-            }, {
-                value: '产品部',
-                label: '产品部'
-            }, {
-                value: '市场部',
-                label: '市场部'
-            }, {
-                value: '人事部',
-                label: '人事部'
-            }, {
-                value: '研发部',
-                label: '研发部'
-            }, {
-                value: '设计部',
-                label: '设计部'
-            }, {
-                value: '后勤部',
-                label: '后勤部'
-            }],
+            options: [],            //部门
             change_limit: {
                 account: '',
                 value: 0,
@@ -943,6 +922,15 @@ export default {
     created() {
         //无附加条件渲染table
         this.load_again(this)
+
+        //获取部门
+        const self_ = this
+        Object.keys(JSON.parse(sessionStorage.getItem('employees'))).forEach(currentVal => {
+            self_.options.push({
+                'value': currentVal,
+                'label': currentVal
+            })
+        })
     }
 }
 </script>

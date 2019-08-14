@@ -46,6 +46,7 @@
                             class="el-icon-search el-input__icon"
                             slot="suffix"
                             style="cursor: pointer"
+                            @click="r"
                         >
                         </i>
                     </el-input>
@@ -55,6 +56,7 @@
                         <el-select
                             v-model="time_screen"
                             placeholder="请选择数据显示区间"
+                            @change="r"
                         >
                             <el-option
                                 v-for="item in options"
@@ -67,12 +69,15 @@
                         <el-date-picker
                             v-model="date_interval"
                             type="daterange"
+                            format="yyyy-MM-dd"
+                            value-format="yyyy-MM-dd"
                             range-separator="至"
                             start-placeholder="开始日期"
                             end-placeholder="结束日期"
+                            @change="cd"
                         >
                         </el-date-picker>
-                        <div class="btn_interval">
+                        <!-- <div class="btn_interval">
                             <el-switch
                                 v-model="picker_"
                                 active-color="#ff4949"
@@ -81,46 +86,95 @@
                                 inactive-text="正序"
                             >
                             </el-switch>
-                        </div>
+                        </div> -->
                     </div>
-                    <div class="default_tree">
-                        <el-timeline :reverse="picker_">
-                            <el-timeline-item
-                                v-for="(activity, index) in activities"
-                                :key="index"
-                                :timestamp="activity.time"
-                                :type="activity.type"
-                                :color="activity.color"
-                                :size="activity.size"
-                                :icon="activity.icon"
-                            >
-                                <div :class="{tit: activity.tit,artical: !activity.tit}">
-                                    {{activity.keyWord}}
-                                </div>
-                            </el-timeline-item>
-                        </el-timeline>
+                    <div class="l">
+                        <div class="default_tree">
+                            <el-timeline :reverse="picker_">
+                                <el-timeline-item
+                                    v-for="(activity, index) in activities"
+                                    :key="index"
+                                    :timestamp="activity.time"
+                                    :type="activity.type"
+                                    :color="activity.color"
+                                    :size="activity.size"
+                                    :icon="activity.icon"
+                                >
+                                    <span
+                                        :class="{tit: activity.tit,artical: !activity.tit}"
+                                        @click="p(activity.path,activity.keyWord,activity.state)"
+                                    >
+                                        {{activity.keyWord}}
+                                        <i
+                                            class="el-icon-document-delete i"
+                                            v-if="activity.state == 'Y'"
+                                        ></i>
+                                    </span>
+                                </el-timeline-item>
+                            </el-timeline>
+                        </div>
+                        <!-- {{ activities }} -->
+                        <div
+                            class="add_more"
+                            v-if="!lock_"
+                        >
+                            <el-button @click="g">加载更多</el-button>
+                        </div>
+                        <div v-if="lock_">
+                            <el-divider content-position="center">
+                                <span style="color: #aaa">已加载全部数据</span>
+                            </el-divider>
+                        </div>
                     </div>
                 </div>
             </template>
         </div>
+        <el-dialog
+            title="预览"
+            :visible.sync="dialogVisible"
+            width="38%"
+            top="3%"
+            class="dialog_"
+        >
+            <img
+                :src="file_url"
+                alt=""
+                v-if="preview_ == 'img'"
+                class="img_"
+            >
+            <video
+                :src="file_url"
+                alt=""
+                v-if="preview_ == 'mp4'"
+                class="img_"
+                controls
+            ></video>
+        </el-dialog>
     </div>
 </template>
 
 <script>
 
 import {
-    record_data
+    record_data,
+    preview_data
 } from '@/api/api_base'
 
 export default {
     name: 'record',
     data() {
         return {
+            lock_: false,
+            current_page: '1',
+            file_url: '',
+            preview_: '',                    //预览类型
+            dialogVisible: false,
             show_moudle: 'login_page',
             main: true,
             search_input: '',                //搜索框
             time_screen: 'month',            //下拉框
             date_interval: '',               //时间段 
+            date_interval_: '',
             picker_: false,                  //时间轴排序方式
             activities: [],                  //数据
             options: [
@@ -140,77 +194,95 @@ export default {
                     value: 'month',
                     label: '本月'
                 }
-            ],
-            demo: {
-                '2019.09.12': [
-                    {
-                        keyWord: '林梦销售报告',
-                        time: '09:16',
-                        id: 13
-                    },
-                    {
-                        keyWord: '设计部PPT',
-                        time: '11:16',
-                        id: 13
-                    },
-                    {
-                        keyWord: '非本人认为儿童',
-                        time: '17:16',
-                        id: 13
-                    },
-                ],
-                '2019-09-11': [
-                    {
-                        keyWord: '让他荷塘月色果然是他',
-                        time: '09:16',
-                        id: 13
-                    },
-                    {
-                        keyWord: '个人个人用户',
-                        time: '11:16',
-                        id: 13
-                    },
-                    {
-                        keyWord: '大富翁搞个6猧',
-                        time: '17:16',
-                        id: 13
-                    },
-                    {
-                        keyWord: '狐天狐地十分广泛',
-                        time: '17:16',
-                        id: 13
-                    },
-                ],
-                '2019.09.10': [
-                    {
-                        keyWord: '林梦销售报告',
-                        time: '09:16',
-                        id: 13
-                    },
-                    {
-                        keyWord: '设计部PPT',
-                        time: '11:16',
-                        id: 13
-                    },
-                    {
-                        keyWord: '非本人认为儿童',
-                        time: '17:16',
-                        id: 13
-                    },
-                ]
-            }
+            ]
         }
     },
     methods: {
+        //预览
+        p(t, k, state) {
+            if (state == 'Y') {
+                this.$message.error('文件已删除')
+                return false
+            }
+            let self_ = this
+            preview_data({ 'path': t, 'name': k })
+                .then(data => {
+                    let arr = k.split('.')
+                    self_.preview_ = arr[arr.length - 1]
+                    switch (self_.preview_) {
+                        case 'jpg':
+                            self_.preview_ = 'img'
+                            break
+                        case 'mp4':
+                            self_.preview_ = 'mp4'
+                            break
+                    }
+                    self_.dialogVisible = true
+                    self_.file_url = data.data
+                })
+
+        },
+        //加载更多
+        g() {
+            this.current_page = String(++this.current_page)
+            this.retrieve_data()
+        },
+        //关键字搜索
+        r() {
+            this.current_page = '1'
+            this.retrieve_data()
+        },
+        //时间片段
+        cd(c) {
+            this.current_page = '1'
+            this.time_screen = ''
+            this.date_interval_ = `${this.date_interval[0]},${this.date_interval[1]}`
+            this.retrieve_data()
+
+        },
+        //下拉框
+        r() {
+            this.current_page = '1'
+            this.date_interval = ''
+            this.retrieve_data()
+        },
         //获取数据
         retrieve_data() {
             let s = {
+                'page_num': this.current_page,
                 'search_input': this.search_input,
                 'time_screen': this.time_screen,
-                'date_interval': this.date_interval
-            }
+                'date_interval': this.date_interval_
+            },
+                self_ = this
             record_data({ 'data': s })
                 .then(data => {
+                    if (self_.current_page == '1') {
+                        self_.activities = []
+                    }
+                    if (data.data[1] == '无事退朝') {
+                        self_.lock_ = true
+                    }
+                    self_.date_interval_ = ''
+                    let u = Object.keys(data.data[2]).reverse()
+                    u.forEach(currentVal => {
+                        self_.activities.push({
+                            keyWord: currentVal,
+                            size: 'large',
+                            type: 'primary',
+                            icon: 'el-icon-stopwatch',
+                            tit: true
+                        })
+                        data.data[2][currentVal].forEach(current_ => {
+                            self_.activities.push({
+                                keyWord: current_.keyWord,
+                                time: current_.time,
+                                id: current_.id,
+                                path: current_.path,
+                                state: current_.isDelect
+                            })
+                        })
+                    })
 
                 })
                 .catch(err => {
@@ -220,26 +292,6 @@ export default {
     },
     created() {
         this.retrieve_data()
-
-        let self_ = this,
-            li_ = null
-        Object.keys(self_.demo).forEach(currentVal => {
-            self_.activities.push({
-                keyWord: currentVal,
-                // timeGenerated: currentVal,
-                size: 'large',
-                type: 'primary',
-                icon: 'el-icon-stopwatch',
-                tit: true
-            })
-            self_.demo[currentVal].forEach(current_ => {
-                self_.activities.push({
-                    keyWord: current_.keyWord,
-                    time: current_.time,
-                    id: current_.id
-                })
-            })
-        })
     }
 }
 </script>
@@ -249,6 +301,7 @@ export default {
     height: calc(100% - 40px);
     overflow: hidden;
     .wrapper {
+        position: relative;
         margin: 0px auto;
         width: 1300px;
         height: 100%;
@@ -302,15 +355,15 @@ export default {
             padding: 8px 16px;
             .operate_default {
                 padding-bottom: 12px;
-                .btn_interval {
-                    float: right;
-                }
+            }
+            .l {
+                overflow: hidden;
+                overflow-y: scroll;
+                height: calc(100% - 70px);
             }
             .default_tree {
                 padding: 8px;
-                height: 650px;
-                overflow: hidden;
-                overflow-y: scroll;
+
                 .tit {
                     color: #409eff;
                     font-weight: 600;
@@ -318,21 +371,21 @@ export default {
                 .artical {
                     cursor: pointer;
                     font-weight: 600;
-                    color: #888
+                    color: #888;
                 }
             }
-            .default_tree::-webkit-scrollbar {
+            .l::-webkit-scrollbar {
                 /*滚动条整体样式*/
                 width: 8px; /*高宽分别对应横竖滚动条的尺寸*/
                 height: 8px;
             }
-            .default_tree::-webkit-scrollbar-thumb {
+            .l::-webkit-scrollbar-thumb {
                 /*滚动条里面小方块*/
                 border-radius: 10px;
                 -webkit-box-shadow: inset 0 0 5px rgba(102, 89, 89, 0.2);
                 background: #9e9797;
             }
-            .default_tree::-webkit-scrollbar-track {
+            .l::-webkit-scrollbar-track {
                 /*滚动条里面轨道*/
                 -webkit-box-shadow: inset 0 0 5px rgba(138, 129, 129, 0.2);
                 border-radius: 10px;
@@ -340,5 +393,24 @@ export default {
             }
         }
     }
+}
+.img_ {
+    width: 100%;
+}
+.i {
+    // color: #fff;
+    color: #f56c6c;
+    border-radius: 2px;
+    // line-height: 1.0em
+    // padding: 1px;
+    font-size: 16px;
+    font-weight: 600;
+    // margin-left: 12px;
+}
+.add_more {
+    // position: absolute;
+    width: 100%;
+    // bottom: 50px;
+    text-align: center;
 }
 </style>

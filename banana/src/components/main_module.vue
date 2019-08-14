@@ -55,11 +55,13 @@ export default {
                 data.data.forEach((currentVal) => {
                     z[Object.keys(currentVal)[0]] = Object.values(currentVal)[0]
                 })
-                this.change_baseData(z)
+                sessionStorage.setItem('employees',JSON.stringify(z))
+                // this.change_baseData(z)
             })
     },
     methods: {
-        ...mapMutations(['changeShowState','change_baseData'])
+        // ...mapMutations(['changeShowState','change_baseData'])
+        ...mapMutations(['changeShowState'])
     }
 }
 </script>

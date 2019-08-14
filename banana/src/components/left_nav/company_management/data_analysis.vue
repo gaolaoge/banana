@@ -39,6 +39,7 @@
                         v-model="data_date"
                         placeholder="数据范围"
                         class="inline_"
+                        @change="change_date"
                     >
                         <el-option
                             v-for="item in data_dates"
@@ -75,35 +76,53 @@
             <el-table
                 :data="tableData"
                 style="width: 100%"
+                class="tab_"
             >
                 <el-table-column
-                    prop="fileName"
-                    label="文件名"
+                    prop="time"
+                    label="时间"
+                    width="220"
+                    align="center"
                 >
                 </el-table-column>
                 <el-table-column
-                    prop="name"
-                    label="上传人"
-                    width="180"
+                    label="新增人数"
+                    align="center"
+                    width="100"
                 >
+                    <template slot-scope="scope">
+                        <el-popover
+                            trigger="hover"
+                            placement="top"
+                        >
+                            <p v-for="i_ in scope.row.items" :key="i_.part">
+                                <img
+                                    src="@/assets/logo.png"
+                                    alt=""
+                                    style="width: 40px;height: 40px;border-radius: 50%"
+                                >
+                                <span style="line-height: 40px;vertical-align: top;display: inline-block;width: 120px;">{{ i_.part }}</span>
+                            </p>
+                            <!-- <p>
+                                李明博 - 设计部
+                            </p> -->
+                            <div
+                                slot="reference"
+                                class="name-wrapper"
+                            >
+                                <el-tag size="medium">{{ scope.row.newNum }}</el-tag>
+                            </div>
+                        </el-popover>
+                    </template>
                 </el-table-column>
                 <el-table-column
-                    prop="fileDate"
-                    label="上传时间"
-                >
-                </el-table-column>
-                <el-table-column
-                    prop="num"
-                    label="数据下载量"
-                >
-                </el-table-column>
-                <el-table-column
-                    prop="happen"
-                    label="查看用户下载情况"
+                    prop="capacity"
+                    label="容量使用情况"
+                    align="center"
                 >
                 </el-table-column>
             </el-table>
-            <el-pagination
+            <!-- <el-pagination
                 @size-change="handleSizeChange"
                 @current-change="handleCurrentChange"
                 :current-page="currentPage4"
@@ -113,30 +132,30 @@
                 :total="100"
                 class="pa_"
             >
-            </el-pagination>
+            </el-pagination> -->
         </div>
     </div>
 </template>
 
 <script>
 
-import { 
+import {
     DataAnalyzeA,
     DataAnalyzeB,
     DataAnalyzeC
- } from '@/api/api_base'
+} from '@/api/api_base'
 
 export default {
     name: '',
     data() {
         this.chartSettings = {
-            showLine: ['下单用户']
+            showLine: ['上月对应数据']
         },
-        this.chartSettings_ = {
-            roseType: 'radius',
-            radius: 40,
-            offsetY: 100,
-        }
+            this.chartSettings_ = {
+                roseType: 'radius',
+                radius: 40,
+                offsetY: 100,
+            }
         return {
             chartData_o: {
                 columns: ['日期', '数量'],
@@ -240,42 +259,12 @@ export default {
                 },
             ],                      //部门
             chartData: {
-                columns: ['日期', '访问用户'],
+                columns: ['日期', '本月数据', '上月对应数据'],
                 rows: [
-                    { '日期': '1/1', '访问用户': 1393 },
-                    { '日期': '1/2', '访问用户': 3530 },
-                    { '日期': '1/3', '访问用户': 2923 },
-                    { '日期': '1/4', '访问用户': 1723 },
-                    { '日期': '1/5', '访问用户': 3723 },
-                    { '日期': '1/6', '访问用户': 4593 },
-                    { '日期': '1/7', '访问用户': 3723 },
-                    { '日期': '1/8', '访问用户': 3723 },
-                    { '日期': '1/9', '访问用户': 3723 },
-                    { '日期': '1/10', '访问用户': 3723 },
-                    { '日期': '1/11', '访问用户': 3723 },
-                    { '日期': '1/12', '访问用户': 3723 },
-                    { '日期': '1/13', '访问用户': 3723 },
-                    { '日期': '1/14', '访问用户': 3723 },
-                    { '日期': '1/15', '访问用户': 3723 },
-                    { '日期': '1/16', '访问用户': 3723 },
-                    { '日期': '1/17', '访问用户': 3723 },
-                    { '日期': '1/18', '访问用户': 3723 },
-                    { '日期': '1/19', '访问用户': 3723 },
-                    { '日期': '1/20', '访问用户': 3723 },
-                    { '日期': '1/21', '访问用户': 6533 },
-                    { '日期': '1/22', '访问用户': 3723 },
-                    { '日期': '1/23', '访问用户': 3345 },
-                    { '日期': '1/24', '访问用户': 3723 },
-                    { '日期': '1/25', '访问用户': 7845 },
-                    { '日期': '1/26', '访问用户': 3345 },
-                    { '日期': '1/27', '访问用户': 3723 },
-                    { '日期': '1/28', '访问用户': 6523 },
-                    { '日期': '1/29', '访问用户': 3063 },
-                    { '日期': '1/30', '访问用户': 3823 },
-                    { '日期': '1/31', '访问用户': 3623 },
+                    // { '日期': '1/1', '访问用户': 1393 },
                 ]
             },
-            data_date: 'thisMonth',         //下拉框
+            data_date: '',         //下拉框
             data_dates: [
                 {
                     value: 'thisMonth',
@@ -295,11 +284,50 @@ export default {
         }
     },
     methods: {
-        change_date(){
+        time_() {
+            // console.log(this.timeInterval)
+            this.data_date = ''
+            let t = `${this.timeInterval[0]},${this.timeInterval[1]}`
+            this.change_date(t)
+            // this.timeInterval = null
+            // console.log(t)
+        },
+        change_date(f) {
             const self_ = this
-            DataAnalyzeB({'time': self_.data_date})
+            if (self_.data_date) {
+                self_.timeInterval = null
+            }
+            DataAnalyzeB({ 'time': f })
                 .then(data => {
-                    console.log(data)
+                    // console.log(data)
+                    self_.chartData.rows = []
+                    let len = Object.keys(data.data[0]).length
+                    Object.keys(data.data[0]).forEach(currentVal => {
+                        let s = currentVal.split('-'),
+                            key = s[1] + '/' + s[2],
+                            val = data.data[0][currentVal].length
+                        self_.chartData.rows.push({ '日期': key, '本月数据': val })
+                        if (val) {
+                            var cap = 0,
+                                it_ = []
+                            for (var i = 0; i < val; i++) {
+                                cap += Number(data.data[0][currentVal][i].totalSpace)
+                                it_.push({
+                                    part: data.data[0][currentVal][i].department + ' - ' + data.data[0][currentVal][i].userName,
+                                    url: '../assets/logo.png'
+                                })
+                            }
+                            self_.tableData.push({
+                                time: currentVal,
+                                newNum: val,
+                                capacity: cap + 'GB',
+                                items: it_
+                            })
+                        }
+                    })
+                    for (var i = 0; i < len; i++) {
+                        self_.chartData.rows[i]['上月对应数据'] = data.data[1][Object.keys(data.data[1])[i]].length
+                    }
                 })
                 .catch(err => {
 
@@ -308,7 +336,7 @@ export default {
     },
     created() {
         const self_ = this
-        DataAnalyzeA({data:'data'})
+        DataAnalyzeA({ data: 'data' })
             .then(data => {
                 self_.chartData_o.rows[0]['数量'] = data.data.beforeDate
                 self_.chartData_o.rows[1]['数量'] = data.data.beforeDateSum
@@ -317,7 +345,7 @@ export default {
                 self_.chartData_th.rows[0]['数量'] = data.data.beforeMonths
                 self_.chartData_th.rows[1]['数量'] = data.data.beforeMonthsSum
             })
-        self_.change_date()
+        self_.change_date('')
     }
 }
 </script>
@@ -361,5 +389,8 @@ export default {
             padding: 10px;
         }
     }
+}
+.tab_ {
+    margin-bottom: 40px;
 }
 </style>

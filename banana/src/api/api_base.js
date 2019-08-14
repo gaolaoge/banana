@@ -1,4 +1,5 @@
-import { axios_j,axios_w } from '@/api/axios_create'
+import { axios_j
+    ,axios_w } from '@/api/axios_create'
 
 //main_modeule 获取基础数据
 export function baseData(data){
@@ -263,6 +264,16 @@ export function card_(data){
     })
 }
 
+//address_book   姓名检索
+export function name_s(data){
+    return axios_w({
+        url: `/company/firm_selectBaiscUser.do`,
+        method: 'POST',
+        timeout: 5000,
+        data
+    })
+}
+
 //statistics   获取部门信息
 export function department_info(data){
     return axios_w({
@@ -385,8 +396,18 @@ export function pu(data){
 
 //record   获取时间线数据
 export function record_data(data){
-    return axios_j({
+    return axios_w({
         url: `/SearchLogs/historyAll.do`,
+        method: 'POST',
+        timeout: 5000,
+        data
+    })
+}
+
+//record   文件预览
+export function preview_data(data){
+    return axios_w({
+        url: `/company/enterpriseFile_preview.do`,
         method: 'POST',
         timeout: 5000,
         data
@@ -396,7 +417,7 @@ export function record_data(data){
 //data_analysis   昨日关键指标统计
 export function DataAnalyzeA(data){
     return axios_w({
-        url: `/company/persionDataAnalyzeA.do `,
+        url: `/company/persionDataAnalyzeA.do`,
         method: 'POST',
         timeout: 5000,
         data
@@ -406,7 +427,7 @@ export function DataAnalyzeA(data){
 //data_analysis   图表
 export function DataAnalyzeB(data){
     return axios_w({
-        url: `/company/persionDataAnalyzeB.do `,
+        url: `/company/persionDataAnalyzeB.do`,
         method: 'POST',
         timeout: 5000,
         data
@@ -416,7 +437,56 @@ export function DataAnalyzeB(data){
 //data_analysis   下载
 export function DataAnalyzeC(data){
     return axios_w({
-        url: `/company/persionDataAnalyzeC.do `,
+        url: `/company/persionDataAnalyzeC.do`,
+        method: 'POST',
+        timeout: 5000,
+        data
+    })
+}
+
+//popular   列表加载
+export function popular_searches(data){
+    return axios_w({
+        url: `/SearchLogs/historyFirm.do`,
+        method: 'POST',
+        timeout: 5000,
+        data
+    })
+}
+
+//details   记录详情
+export function details_record(data){
+    return axios_w({
+        url: `/SearchLogs/historyUser.do`,
+        method: 'POST',
+        timeout: 5000,
+        data
+    })
+}
+
+//new_email   发邮件
+export function send_new_email(data){
+    return axios_j({
+        url: `/MessageCenter/sendEmails.do`,
+        method: 'POST',
+        timeout: 5000,
+        data
+    })
+}
+
+//new_email   近期联系人
+export function catch_email(data){
+    return axios_j({
+        url: `/MessageCenter/recentContact.do`,
+        method: 'GET',
+        timeout: 5000,
+    })
+}
+
+//new_email   草稿
+export function draft_email(data){
+    return axios_j({
+        url: `/MessageCenter/temporaryStorage.do`,
         method: 'POST',
         timeout: 5000,
         data

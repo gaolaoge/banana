@@ -144,24 +144,62 @@
                                 v-on:click="skip('delete_box')"
                                 v-show="show_me"
                             >{{ delete_box }}</el-menu-item>
+                            <el-menu-item
+                                index="5-6"
+                                v-on:click="skip('new_email')"
+                                v-show="show_me"
+                            >{{ new_email }}</el-menu-item>
                         </el-submenu>
 
-                        <el-menu-item index="6" v-on:click="skip('resources_management')">
+                        <!-- <el-menu-item
+                            index="6"
+                            v-on:click="skip('resources_management')"
+                        >
                             <i class="el-icon-takeaway-box"></i>
                             <span slot="title">{{ resources_management }}</span>
-                        </el-menu-item>
+                        </el-menu-item> -->
 
-                        <!-- <el-submenu index="6">
+                        <el-submenu index="6">
                             <template slot="title">
                                 <i class="el-icon-takeaway-box"></i>
                                 <span>资源管理</span>
                             </template>
                             <el-menu-item
                                 index="6-1"
-                                v-on:click="skip('inbox')"
+                                v-on:click="skip('fixed_storage')"
                                 v-show="show_me"
-                            >{{ inbox }}</el-menu-item>
-                        </el-submenu> -->
+                            >{{ fixed_storage }}</el-menu-item>
+                            <el-menu-item
+                                index="6-2"
+                                v-on:click="skip('temporary_storage')"
+                                v-show="show_me"
+                            >{{ temporary_storage }}</el-menu-item>
+                            <el-menu-item
+                                index="6-3"
+                                v-on:click="skip('customize')"
+                                v-show="show_me"
+                            >{{ customize }}</el-menu-item>
+                            <el-menu-item
+                                index="6-4"
+                                v-on:click="skip('shared_documents')"
+                                v-show="show_me"
+                            >{{ shared_documents }}</el-menu-item>
+                            <el-menu-item
+                                index="6-5"
+                                v-on:click="skip('internal_interwork')"
+                                v-show="show_me"
+                            >{{ internal_interwork }}</el-menu-item>
+                            <el-menu-item
+                                index="6-6"
+                                v-on:click="skip('document_retrieval')"
+                                v-show="show_me"
+                            >{{ document_retrieval }}</el-menu-item>
+                            <el-menu-item
+                                index="6-7"
+                                v-on:click="skip('visual_analysis')"
+                                v-show="show_me"
+                            >{{ visual_analysis }}</el-menu-item>
+                        </el-submenu>
 
                         <el-submenu index="7">
                             <template slot="title">
@@ -225,6 +263,14 @@ export default {
     name: 'module_left',
     data() {
         return {
+            visual_analysis: '可视化分析',
+            document_retrieval: '文件检索',
+            internal_interwork: '内部互通',
+            shared_documents: '共享文件',
+            customize: '自定义',
+            temporary_storage: '临时存储',
+            fixed_storage: '固定存储',
+            new_email: '写邮件',
             enterprise: '企业文件',
             statistics: '部门统计',
             resources_management: '资源管理',
@@ -277,7 +323,7 @@ export default {
                 case 'enterprise':
                     this_.$router.replace('/company_management/enterprise');
                     break;
-                    case 'statistics':
+                case 'statistics':
                     this_.$router.replace('/company_management/statistics');
                     break;
                 case 'record':
@@ -322,9 +368,26 @@ export default {
                 case 'company_add':
                     this.$router.replace('/super_admin/company_add');
                     break;
+
                 case 'inbox':
-                    this.$router.replace('/message_center/inbox');
+                    this.$router.replace('/message_center/inbox?state=inbox');
                     break;
+                case 'star_box':
+                    this.$router.replace('/message_center/inbox?state=star_box');
+                    break;
+                case 'draft_box':
+                    this.$router.replace('/message_center/inbox?state=draft_box');
+                    break;
+                case 'send_box':
+                    this.$router.replace('/message_center/inbox?state=send_box');
+                    break;
+                case 'delete_box':
+                    this.$router.replace('/message_center/inbox?state=delete_box');
+                    break;
+                case 'new_email':
+                    this.$router.replace('/message_center/new_email');
+                    break;
+
                 case 'date_management':
                     this.$router.replace('/system/date_management');
                     break;
@@ -334,18 +397,27 @@ export default {
                 case 'file_management':
                     this.$router.replace('/system/file_management');
                     break;
-                case 'resources_management':
-                    this.$router.replace('/resources_management/resources_management');
+                case 'fixed_storage':
+                    this.$router.replace('/resources_management/storage_base?data=fixed_storage');
                     break;
-                // case 'company_add':
-                //     this.$router.replace('/super_admin/company_add');
-                //     // break;
-                // case 'company_add':
-                //     this.$router.replace('/super_admin/company_add');
-                //     break;
-                // case 'company_add':
-                //     this.$router.replace('/super_admin/company_add');
-                //     break;
+                case 'temporary_storage':
+                    this.$router.replace('/resources_management/storage_base?data=temporary_storage');
+                    break;
+                case 'customize':
+                    this.$router.replace('/resources_management/customize');
+                    break;
+                case 'shared_documents':
+                    this.$router.replace('/resources_management/storage_base?data=shared_documents');
+                    break;
+                case 'internal_interwork':
+                    this.$router.replace('/resources_management/internal_interwork');
+                    break;
+                case 'document_retrieval':
+                    this.$router.replace('/resources_management/document_retrieval');
+                    break;
+                case 'visual_analysis':
+                    this.$router.replace('/resources_management/visual_analysis');
+                    break;
             }
         },
         //导航标签
