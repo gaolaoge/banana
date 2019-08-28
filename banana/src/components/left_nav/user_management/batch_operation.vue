@@ -132,261 +132,261 @@ export default {
         return {
             data: '',           //留作对比的数据
             users: {            //修改的数据
-                //营销部
-                '营销部': [
-                    {
-                        userName: '高歌',
-                        account: 'gaoge',
-                        id: '001',
-                        department: '营销部'
-                    },
-                    {
-                        userName: '王强',
-                        account: 'wangqiang',
-                        id: '002',
-                        department: '营销部'
-                    },
-                    {
-                        userName: '张宇',
-                        account: 'zhangyu',
-                        id: '003',
-                        department: '营销部'
-                    },
-                    {
-                        userName: '林梦至',
-                        account: 'linmengzhi',
-                        id: '004',
-                        department: '营销部'
-                    },
-                    {
-                        userName: '贾冰倩',
-                        account: 'jiabingqian',
-                        id: '005',
-                        department: '营销部'
-                    },
-                    {
-                        userName: '贾冰倩2',
-                        account: 'jiabingqian2',
-                        id: '006',
-                        department: '营销部'
-                    },
-                    {
-                        userName: '贾冰倩3',
-                        account: 'jiabingqian3',
-                        id: '007',
-                        department: '营销部'
-                    },
-                    {
-                        userName: '贾冰倩4',
-                        account: 'jiabingqian4',
-                        id: '008',
-                        department: '营销部'
-                    },
-                    {
-                        userName: '贾冰倩5',
-                        account: 'jiabingqian5',
-                        id: '009',
-                        department: '营销部'
-                    },
-                ],
-                //产品部
-                '产品部': [
-                    {
-                        userName: '周杰伦',
-                        account: 'zhoujielun',
-                        id: '011',
-                        department: '产品部'
-                    },
-                    {
-                        userName: '陈奕迅',
-                        account: 'chenyixun',
-                        id: '012',
-                        department: '产品部'
-                    },
-                    {
-                        userName: '王力宏',
-                        account: 'wanglihong',
-                        id: '013',
-                        department: '产品部'
-                    },
-                    {
-                        userName: '林志炫',
-                        account: 'linzhixuan',
-                        id: '014',
-                        department: '产品部'
-                    },
-                    {
-                        userName: '薛之谦',
-                        account: 'xuezhixqian',
-                        id: '015',
-                        department: '产品部'
-                    },
-                ],
-                //市场部
-                '市场部': [
-                    {
-                        userName: '王旭',
-                        account: 'wangxu',
-                        id: '021',
-                        department: '市场部'
-                    },
-                    {
-                        userName: '郑香宜',
-                        account: 'zhengxiangyi',
-                        id: '022',
-                        department: '市场部'
-                    },
-                    {
-                        userName: '解晨',
-                        account: 'xiechen',
-                        id: '023',
-                        department: '市场部'
-                    },
-                    {
-                        userName: '孙伟鹏',
-                        account: 'sunweipeng',
-                        id: '024',
-                        department: '市场部'
-                    },
-                    {
-                        userName: '吴春亮',
-                        account: 'wuchunliang',
-                        id: '025',
-                        department: '市场部'
-                    },
-                ],
-                //人事部
-                '人事部': [
-                    {
-                        userName: '常旭',
-                        account: 'cahngxu',
-                        id: '031',
-                        department: '人事部'
-                    },
-                    {
-                        userName: '何晓言',
-                        account: 'hexiaoyan',
-                        id: '032',
-                        department: '人事部'
-                    },
-                    {
-                        userName: '理想',
-                        account: 'lixiang',
-                        id: '033',
-                        department: '人事部'
-                    },
-                    {
-                        userName: '曾智慧',
-                        account: 'zengzhihui',
-                        id: '034',
-                        department: '人事部'
-                    },
-                    {
-                        userName: '张大光',
-                        account: 'zhangdaguang',
-                        id: '035',
-                        department: '人事部'
-                    },
-                ],
-                //研发部
-                '研发部': [
-                    {
-                        userName: '雷军',
-                        account: 'leijun',
-                        id: '041',
-                        department: '研发部'
-                    },
-                    {
-                        userName: '贾跃亭',
-                        account: 'jiayueting',
-                        id: '042',
-                        department: '研发部'
-                    },
-                    {
-                        userName: '罗永浩',
-                        account: 'luoyonghao',
-                        id: '043',
-                        department: '研发部'
-                    },
-                    {
-                        userName: '任正非',
-                        account: 'renzhengfei',
-                        id: '044',
-                        department: '研发部'
-                    },
-                    {
-                        userName: '乔布斯',
-                        account: 'qiaobusi',
-                        id: '045',
-                        department: '研发部'
-                    },
-                ],
-                //设计部
-                '设计部': [
-                    {
-                        userName: '郭德纲',
-                        account: 'guodegang',
-                        id: '051',
-                        department: '设计部'
-                    },
-                    {
-                        userName: '于谦',
-                        account: 'yuqian',
-                        id: '052',
-                        department: '设计部'
-                    },
-                    {
-                        userName: '岳云鹏',
-                        account: 'yueyunpeng',
-                        id: '053',
-                        department: '设计部'
-                    },
-                    {
-                        userName: '孙越',
-                        account: 'sunyue',
-                        id: '054',
-                        department: '设计部'
-                    },
-                    {
-                        userName: '高峰',
-                        account: 'gaofeng',
-                        id: '055',
-                        department: '设计部'
-                    },
-                ],
-                //后勤部
-                '后勤部': [
-                    {
-                        userName: '刘德华',
-                        account: 'liudehua',
-                        id: '061',
-                        department: '后勤部'
-                    },
-                    {
-                        userName: '周润发',
-                        account: 'zhourunfa',
-                        id: '062',
-                        department: '后勤部'
-                    },
-                    {
-                        userName: '张学友',
-                        account: 'zhangxueyou',
-                        id: '063',
-                        department: '后勤部'
-                    },
-                    {
-                        userName: '陈雪凝',
-                        account: 'chenxuening',
-                        id: '064',
-                        department: '后勤部'
-                    },
-                    {
-                        userName: '邓紫棋',
-                        account: 'dengziqi',
-                        id: '065',
-                        department: '后勤部'
-                    },
-                ],
+                // //营销部
+                // '营销部': [
+                //     {
+                //         userName: '高歌',
+                //         account: 'gaoge',
+                //         id: '001',
+                //         department: '营销部'
+                //     },
+                //     {
+                //         userName: '王强',
+                //         account: 'wangqiang',
+                //         id: '002',
+                //         department: '营销部'
+                //     },
+                //     {
+                //         userName: '张宇',
+                //         account: 'zhangyu',
+                //         id: '003',
+                //         department: '营销部'
+                //     },
+                //     {
+                //         userName: '林梦至',
+                //         account: 'linmengzhi',
+                //         id: '004',
+                //         department: '营销部'
+                //     },
+                //     {
+                //         userName: '贾冰倩',
+                //         account: 'jiabingqian',
+                //         id: '005',
+                //         department: '营销部'
+                //     },
+                //     {
+                //         userName: '贾冰倩2',
+                //         account: 'jiabingqian2',
+                //         id: '006',
+                //         department: '营销部'
+                //     },
+                //     {
+                //         userName: '贾冰倩3',
+                //         account: 'jiabingqian3',
+                //         id: '007',
+                //         department: '营销部'
+                //     },
+                //     {
+                //         userName: '贾冰倩4',
+                //         account: 'jiabingqian4',
+                //         id: '008',
+                //         department: '营销部'
+                //     },
+                //     {
+                //         userName: '贾冰倩5',
+                //         account: 'jiabingqian5',
+                //         id: '009',
+                //         department: '营销部'
+                //     },
+                // ],
+                // //产品部
+                // '产品部': [
+                //     {
+                //         userName: '周杰伦',
+                //         account: 'zhoujielun',
+                //         id: '011',
+                //         department: '产品部'
+                //     },
+                //     {
+                //         userName: '陈奕迅',
+                //         account: 'chenyixun',
+                //         id: '012',
+                //         department: '产品部'
+                //     },
+                //     {
+                //         userName: '王力宏',
+                //         account: 'wanglihong',
+                //         id: '013',
+                //         department: '产品部'
+                //     },
+                //     {
+                //         userName: '林志炫',
+                //         account: 'linzhixuan',
+                //         id: '014',
+                //         department: '产品部'
+                //     },
+                //     {
+                //         userName: '薛之谦',
+                //         account: 'xuezhixqian',
+                //         id: '015',
+                //         department: '产品部'
+                //     },
+                // ],
+                // //市场部
+                // '市场部': [
+                //     {
+                //         userName: '王旭',
+                //         account: 'wangxu',
+                //         id: '021',
+                //         department: '市场部'
+                //     },
+                //     {
+                //         userName: '郑香宜',
+                //         account: 'zhengxiangyi',
+                //         id: '022',
+                //         department: '市场部'
+                //     },
+                //     {
+                //         userName: '解晨',
+                //         account: 'xiechen',
+                //         id: '023',
+                //         department: '市场部'
+                //     },
+                //     {
+                //         userName: '孙伟鹏',
+                //         account: 'sunweipeng',
+                //         id: '024',
+                //         department: '市场部'
+                //     },
+                //     {
+                //         userName: '吴春亮',
+                //         account: 'wuchunliang',
+                //         id: '025',
+                //         department: '市场部'
+                //     },
+                // ],
+                // //人事部
+                // '人事部': [
+                //     {
+                //         userName: '常旭',
+                //         account: 'cahngxu',
+                //         id: '031',
+                //         department: '人事部'
+                //     },
+                //     {
+                //         userName: '何晓言',
+                //         account: 'hexiaoyan',
+                //         id: '032',
+                //         department: '人事部'
+                //     },
+                //     {
+                //         userName: '理想',
+                //         account: 'lixiang',
+                //         id: '033',
+                //         department: '人事部'
+                //     },
+                //     {
+                //         userName: '曾智慧',
+                //         account: 'zengzhihui',
+                //         id: '034',
+                //         department: '人事部'
+                //     },
+                //     {
+                //         userName: '张大光',
+                //         account: 'zhangdaguang',
+                //         id: '035',
+                //         department: '人事部'
+                //     },
+                // ],
+                // //研发部
+                // '研发部': [
+                //     {
+                //         userName: '雷军',
+                //         account: 'leijun',
+                //         id: '041',
+                //         department: '研发部'
+                //     },
+                //     {
+                //         userName: '贾跃亭',
+                //         account: 'jiayueting',
+                //         id: '042',
+                //         department: '研发部'
+                //     },
+                //     {
+                //         userName: '罗永浩',
+                //         account: 'luoyonghao',
+                //         id: '043',
+                //         department: '研发部'
+                //     },
+                //     {
+                //         userName: '任正非',
+                //         account: 'renzhengfei',
+                //         id: '044',
+                //         department: '研发部'
+                //     },
+                //     {
+                //         userName: '乔布斯',
+                //         account: 'qiaobusi',
+                //         id: '045',
+                //         department: '研发部'
+                //     },
+                // ],
+                // //设计部
+                // '设计部': [
+                //     {
+                //         userName: '郭德纲',
+                //         account: 'guodegang',
+                //         id: '051',
+                //         department: '设计部'
+                //     },
+                //     {
+                //         userName: '于谦',
+                //         account: 'yuqian',
+                //         id: '052',
+                //         department: '设计部'
+                //     },
+                //     {
+                //         userName: '岳云鹏',
+                //         account: 'yueyunpeng',
+                //         id: '053',
+                //         department: '设计部'
+                //     },
+                //     {
+                //         userName: '孙越',
+                //         account: 'sunyue',
+                //         id: '054',
+                //         department: '设计部'
+                //     },
+                //     {
+                //         userName: '高峰',
+                //         account: 'gaofeng',
+                //         id: '055',
+                //         department: '设计部'
+                //     },
+                // ],
+                // //后勤部
+                // '后勤部': [
+                //     {
+                //         userName: '刘德华',
+                //         account: 'liudehua',
+                //         id: '061',
+                //         department: '后勤部'
+                //     },
+                //     {
+                //         userName: '周润发',
+                //         account: 'zhourunfa',
+                //         id: '062',
+                //         department: '后勤部'
+                //     },
+                //     {
+                //         userName: '张学友',
+                //         account: 'zhangxueyou',
+                //         id: '063',
+                //         department: '后勤部'
+                //     },
+                //     {
+                //         userName: '陈雪凝',
+                //         account: 'chenxuening',
+                //         id: '064',
+                //         department: '后勤部'
+                //     },
+                //     {
+                //         userName: '邓紫棋',
+                //         account: 'dengziqi',
+                //         id: '065',
+                //         department: '后勤部'
+                //     },
+                // ],
             },
             t: {},
             dialogVisible: false,

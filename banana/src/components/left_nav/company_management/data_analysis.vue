@@ -69,9 +69,10 @@
                     :data="chartData"
                     :settings="chartSettings"
                 ></ve-histogram>
+                <!-- {{ chartData }} -->
             </div>
             <div class="bu">
-                <el-button class="e">下载报表</el-button>
+                <el-button class="e" @click="download_">下载报表</el-button>
             </div>
             <el-table
                 :data="tableData"
@@ -95,17 +96,14 @@
                             trigger="hover"
                             placement="top"
                         >
-                            <p v-for="i_ in scope.row.items" :key="i_.part">
+                            <p v-for="i_ in scope.row.items" :key="i_.part" style="line-height: 3.8em">
                                 <img
-                                    src="@/assets/logo.png"
+                                    :src= i_.url
                                     alt=""
                                     style="width: 40px;height: 40px;border-radius: 50%"
                                 >
-                                <span style="line-height: 40px;vertical-align: top;display: inline-block;width: 120px;">{{ i_.part }}</span>
+                                <span style="vertical-align: top;display: inline-block;width: 120px;">{{ i_.part }}</span>
                             </p>
-                            <!-- <p>
-                                李明博 - 设计部
-                            </p> -->
                             <div
                                 slot="reference"
                                 class="name-wrapper"
@@ -151,11 +149,11 @@ export default {
         this.chartSettings = {
             showLine: ['上月对应数据']
         },
-            this.chartSettings_ = {
-                roseType: 'radius',
-                radius: 40,
-                offsetY: 100,
-            }
+        this.chartSettings_ = {
+            roseType: 'radius',
+            radius: 40,
+            offsetY: 100,
+        }
         return {
             chartData_o: {
                 columns: ['日期', '数量'],
@@ -284,6 +282,18 @@ export default {
         }
     },
     methods: {
+        download_(){
+            DataAnalyzeC({'data':'data'})
+                .then(data => {
+                    const a = document.createElement('a')
+                    a.style.display = 'none'
+                    a.download = '报表'
+                    a.href = data.data
+                    a.target = '_blank'
+                    document.getElementsByClassName('wrapper')[0].append(a)
+                    a.click()
+                })
+        },
         time_() {
             // console.log(this.timeInterval)
             this.data_date = ''
@@ -314,14 +324,16 @@ export default {
                                 cap += Number(data.data[0][currentVal][i].totalSpace)
                                 it_.push({
                                     part: data.data[0][currentVal][i].department + ' - ' + data.data[0][currentVal][i].userName,
-                                    url: '../assets/logo.png'
+                                    url: data.data[0][currentVal][i].headPortrait,
                                 })
                             }
                             self_.tableData.push({
                                 time: currentVal,
                                 newNum: val,
                                 capacity: cap + 'GB',
-                                items: it_
+                                items: it_,
+                                // header: 
+
                             })
                         }
                     })

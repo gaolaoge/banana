@@ -492,3 +492,123 @@ export function draft_email(data){
         data
     })
 }
+
+//document_retrieval 获取列表数据
+export function retrieval_obtain(data){
+    return axios_j({
+        url: `/userInfo/keyWord.do`,
+        method: 'POST',
+        timeout: 5000,
+        data
+    })
+}
+
+//storage_base 获取列表数据
+export function storage_base(data){
+    return axios_w({
+        url: `/resource/resource_showFTList.do`,
+        method: 'POST',
+        timeout: 5000,
+        data
+    })
+}
+
+//storage_base 数据移动至其它文件夹
+export function move_data(data){
+    return axios_w({
+        url: `/resource/changeFileTL.do`,
+        method: 'POST',
+        timeout: 5000,
+        data
+    })
+}
+
+//customize 新建文件夹
+export function create_folder(data){
+    return axios_w({
+        url: `/resource/createCustomFolder.do`,
+        method: 'POST',
+        timeout: 5000,
+        data
+    })
+}
+
+//customize 获取文件夹
+export function customize_get(data){
+    return axios_w({
+        url: `/resource/resource_showUserCFolder.do`,
+        method: 'POST',
+        timeout: 5000,
+        data
+    })
+}
+
+//customize 获取表格数据
+export function customize_tab(data){
+    return axios_w({
+        url: `/resource/resource_showUserCFolderDetials.do`,
+        method: 'POST',
+        timeout: 5000,
+        data
+    })
+}
+
+//customize 改名
+export function customize_rename(data){
+    return axios_w({
+        url: `/resource/ChangeNameCustomFolder.do`,
+        method: 'POST',
+        timeout: 5000,
+        data
+    })
+}
+
+//customize 查看
+export function customize_view(data){
+    return axios_w({
+        url: `...`,
+        method: 'POST',
+        timeout: 5000,
+        data
+    })
+}
+
+//customize 清空
+export function customize_empty(data){
+    return axios_w({
+        url: `/resource/EmptyCustomFolder.do`,
+        method: 'POST',
+        timeout: 5000,
+        data
+    })
+}
+
+//customize 删除
+export function customize_delete(data){
+    return axios_w({
+        url: `/resource/DeleteCustomFolder.do`,
+        method: 'POST',
+        timeout: 5000,
+        data
+    })
+}
+
+//layim 查找群
+export function im_group_search(data){
+    return axios_w({
+        url: `/IM/addGroup.do`,
+        method: 'POST',
+        timeout: 5000,
+        data
+    })
+}
+
+//console 查找群
+export function console_base(data){
+    return axios_w({
+        url: `/console/consoleShow.do`,
+        method: 'POST',
+        timeout: 5000,
+        data
+    })
+}

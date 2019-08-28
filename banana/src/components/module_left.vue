@@ -6,16 +6,24 @@
         >
             <el-row class="tac">
                 <el-col :span="24">
+                    <!-- background-color="#2d5988" -->
                     <el-menu
                         default-active="1"
                         class="el-menu-vertical-demo"
                         @open="handleOpen"
                         @close="handleClose"
-                        background-color="#2d5988"
+                        background-color="#393D49"
                         text-color="#fff"
                         active-text-color="#ffd04b"
                         unique-opened
                     >
+                        <el-menu-item
+                            index="0"
+                            @click="skip('console')"
+                        >
+                            <i class="el-icon-data-line"></i>
+                            <span slot="title">总控</span>
+                        </el-menu-item>
                         <el-submenu index="1">
                             <template slot="title">
                                 <i class="el-icon-menu"></i>
@@ -23,17 +31,17 @@
                             </template>
                             <el-menu-item
                                 index="1-1"
-                                v-on:click="skip('storage_management')"
+                                @click="skip('storage_management')"
                                 v-show="show_me"
                             >{{ storage_management }}</el-menu-item>
                             <el-menu-item
                                 index="1-2"
-                                v-on:click="skip('download_management')"
+                                @click="skip('download_management')"
                                 v-show="show_me"
                             >{{ download_management }}</el-menu-item>
                             <el-menu-item
                                 index="1-3"
-                                v-on:click="skip('announcement_management')"
+                                @click="skip('announcement_management')"
                                 v-show="show_me"
                             >{{ announcement_management }}</el-menu-item>
                         </el-submenu>
@@ -45,27 +53,27 @@
                             </template>
                             <el-menu-item
                                 index="2-1"
-                                v-on:click="skip('Dashboard')"
+                                @click="skip('Dashboard')"
                                 v-show="show_me"
                             >{{ Dashboard }}</el-menu-item>
                             <el-menu-item
                                 index="2-2"
-                                v-on:click="skip('address_book')"
+                                @click="skip('address_book')"
                                 v-show="show_me"
                             >{{ address_book }}</el-menu-item>
                             <el-menu-item
                                 index="2-3"
-                                v-on:click="skip('data_analysis')"
+                                @click="skip('data_analysis')"
                                 v-show="show_me"
                             >{{ data_analysis }}</el-menu-item>
                             <el-menu-item
                                 index="2-4"
-                                v-on:click="skip('statistics')"
+                                @click="skip('statistics')"
                                 v-show="show_me"
                             >{{ statistics }}</el-menu-item>
                             <el-menu-item
                                 index="2-5"
-                                v-on:click="skip('enterprise')"
+                                @click="skip('enterprise')"
                                 v-show="show_me"
                             >{{ enterprise }}</el-menu-item>
                         </el-submenu>
@@ -77,22 +85,22 @@
                             </template>
                             <el-menu-item
                                 index="3-1"
-                                v-on:click="skip('user_management_info')"
+                                @click="skip('user_management_info')"
                                 v-show="show_me"
                             >{{ user_management_info }}</el-menu-item>
                             <el-menu-item
                                 index="3-2"
-                                v-on:click="skip('user_management_self')"
+                                @click="skip('user_management_self')"
                                 v-show="show_me"
                             >{{ user_management_self }}</el-menu-item>
                             <el-menu-item
                                 index="3-3"
-                                v-on:click="skip('batch_operation')"
+                                @click="skip('batch_operation')"
                                 v-show="show_me"
                             >{{ batch_operation }}</el-menu-item>
                             <el-menu-item
                                 index="3-4"
-                                v-on:click="skip('memory_management')"
+                                @click="skip('memory_management')"
                                 v-show="show_me"
                             >{{ memory_management }}</el-menu-item>
                         </el-submenu>
@@ -104,12 +112,12 @@
                             </template>
                             <el-menu-item
                                 index="4-1"
-                                v-on:click="skip('company_list')"
+                                @click="skip('company_list')"
                                 v-show="show_me"
                             >{{ company_list }}</el-menu-item>
                             <el-menu-item
                                 index="4-2"
-                                v-on:click="skip('company_add')"
+                                @click="skip('company_add')"
                                 v-show="show_me"
                             >{{ company_add }}</el-menu-item>
                         </el-submenu>
@@ -121,39 +129,39 @@
                             </template>
                             <el-menu-item
                                 index="5-1"
-                                v-on:click="skip('inbox')"
+                                @click="skip('inbox')"
                                 v-show="show_me"
                             >{{ inbox }}</el-menu-item>
                             <el-menu-item
                                 index="5-2"
-                                v-on:click="skip('star_box')"
+                                @click="skip('star_box')"
                                 v-show="show_me"
                             >{{ star_box }}</el-menu-item>
                             <el-menu-item
                                 index="5-3"
-                                v-on:click="skip('draft_box')"
+                                @click="skip('draft_box')"
                                 v-show="show_me"
                             >{{ draft_box }}</el-menu-item>
                             <el-menu-item
                                 index="5-4"
-                                v-on:click="skip('send_box')"
+                                @click="skip('send_box')"
                                 v-show="show_me"
                             >{{ send_box }}</el-menu-item>
                             <el-menu-item
                                 index="5-5"
-                                v-on:click="skip('delete_box')"
+                                @click="skip('delete_box')"
                                 v-show="show_me"
                             >{{ delete_box }}</el-menu-item>
                             <el-menu-item
                                 index="5-6"
-                                v-on:click="skip('new_email')"
+                                @click="skip('new_email')"
                                 v-show="show_me"
                             >{{ new_email }}</el-menu-item>
                         </el-submenu>
 
                         <!-- <el-menu-item
                             index="6"
-                            v-on:click="skip('resources_management')"
+                            @click="skip('resources_management')"
                         >
                             <i class="el-icon-takeaway-box"></i>
                             <span slot="title">{{ resources_management }}</span>
@@ -166,37 +174,37 @@
                             </template>
                             <el-menu-item
                                 index="6-1"
-                                v-on:click="skip('fixed_storage')"
+                                @click="skip('fixed_storage')"
                                 v-show="show_me"
                             >{{ fixed_storage }}</el-menu-item>
                             <el-menu-item
                                 index="6-2"
-                                v-on:click="skip('temporary_storage')"
+                                @click="skip('temporary_storage')"
                                 v-show="show_me"
                             >{{ temporary_storage }}</el-menu-item>
                             <el-menu-item
                                 index="6-3"
-                                v-on:click="skip('customize')"
+                                @click="skip('customize')"
                                 v-show="show_me"
                             >{{ customize }}</el-menu-item>
                             <el-menu-item
                                 index="6-4"
-                                v-on:click="skip('shared_documents')"
+                                @click="skip('shared_documents')"
                                 v-show="show_me"
                             >{{ shared_documents }}</el-menu-item>
-                            <el-menu-item
+                            <!-- <el-menu-item
                                 index="6-5"
-                                v-on:click="skip('internal_interwork')"
+                                @click="skip('internal_interwork')"
                                 v-show="show_me"
-                            >{{ internal_interwork }}</el-menu-item>
+                            >{{ internal_interwork }}</el-menu-item> -->
                             <el-menu-item
                                 index="6-6"
-                                v-on:click="skip('document_retrieval')"
+                                @click="skip('document_retrieval')"
                                 v-show="show_me"
                             >{{ document_retrieval }}</el-menu-item>
                             <el-menu-item
                                 index="6-7"
-                                v-on:click="skip('visual_analysis')"
+                                @click="skip('visual_analysis')"
                                 v-show="show_me"
                             >{{ visual_analysis }}</el-menu-item>
                         </el-submenu>
@@ -208,12 +216,12 @@
                             </template>
                             <el-menu-item
                                 index="7-1"
-                                v-on:click="skip('record')"
+                                @click="skip('record')"
                                 v-show="show_me"
                             >{{ record }}</el-menu-item>
                             <el-menu-item
                                 index="7-2"
-                                v-on:click="skip('popular')"
+                                @click="skip('popular')"
                                 v-show="show_me"
                             >{{ popular }}</el-menu-item>
                         </el-submenu>
@@ -225,17 +233,17 @@
                             </template>
                             <el-menu-item
                                 index="8-1"
-                                v-on:click="skip('date_management')"
+                                @click="skip('date_management')"
                                 v-show="show_me"
                             >{{ date_management }}</el-menu-item>
                             <el-menu-item
                                 index="8-2"
-                                v-on:click="skip('file_management')"
+                                @click="skip('file_management')"
                                 v-show="show_me"
                             >{{ file_management }}</el-menu-item>
                             <el-menu-item
                                 index="8-3"
-                                v-on:click="skip('message_management')"
+                                @click="skip('message_management')"
                                 v-show="show_me"
                             >{{ message_management }}</el-menu-item>
                         </el-submenu>
@@ -307,6 +315,8 @@ export default {
             delete_box: '已删除',
             show_me: true,                          //主菜单隐藏时隐藏导航
             extend: false,
+            console: '控制台',
+
         }
     },
     methods: {
@@ -418,18 +428,49 @@ export default {
                 case 'visual_analysis':
                     this.$router.replace('/resources_management/visual_analysis');
                     break;
+                case 'console':
+                    this.$router.replace('/console')
+                    break
             }
         },
         //导航标签
         nav() {
             let u = window.location.pathname,
+                info_ = window.location.search,
                 ua = u.trim().split('/'),
                 s = '',
                 _this = this
             ua.shift()
             ua.forEach(function (currentVal, index, arr) {
                 s = s + _this[currentVal] + ' / '
+
             })
+            if (info_) {
+                switch (info_) {
+                    case '?data=fixed_storage':
+                        s = s.replace(/undefined/, '固定存储')
+                        break
+                    case '?data=temporary_storage':
+                        s = s.replace(/undefined/, '临时存储')
+                        break
+                    case '?data=shared_documents':
+                        s = s.replace(/undefined/, '共享文件')
+                        break
+                    case '?state=star_box':
+                        s = s.replace('收件箱', '标星箱')
+                        break
+                    case '?state=draft_box':
+                        s = s.replace('收件箱', '草稿箱')
+                        break
+                    case '?state=send_box':
+                        s = s.replace('收件箱', '已发送')
+                        break
+                    case '?state=delete_box':
+                        s = s.replace('收件箱', '已删除')
+                        break
+                }
+
+            }
             this.$store.commit('change_current', s)
         }
     },
@@ -493,7 +534,8 @@ export default {
 .nav_link {
     width: 64px;
     height: 100%;
-    background-color: #2d5988;
+    /* background-color: #2d5988; */
+    background: #393d49;
     transition: width 0.4s;
 }
 .nav_link.show_me {

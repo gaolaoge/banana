@@ -30,6 +30,8 @@ import internal_interwork from '@/components/left_nav/resources_management/inter
 import document_retrieval from '@/components/left_nav/resources_management/document_retrieval'
 import visual_analysis from '@/components/left_nav/resources_management/visual_analysis'
 import new_email from '@/components/left_nav/email/new_email'
+import console from '@/components/left_nav/console'
+import find_layim from '@/assets/find'
 
 Vue.use(Router)
 
@@ -56,6 +58,10 @@ export default new Router({
       component: main_module,
       redirect: '/platform_management/storage_management',
       children: [
+        {
+          path: '/console',
+          component: console
+        },
         {
           path: '/resources_management/storage_base',           //资源管理 - 固定存储/临时存储/共享文件
           component: storage_base
@@ -175,6 +181,11 @@ export default new Router({
     //   name: 'main_module',
     //   component: main_module
     // },
+    { 
+      path: '/find',
+      name: 'find_layim',
+      component: find_layim 
+    },
     { path: '*', redirect: '/main_module'}
   ],
   mode: 'history'

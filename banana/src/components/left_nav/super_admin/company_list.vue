@@ -241,7 +241,6 @@ export default {
         search_(s)
             .then(data => {
                 this.tableData = data.data[0]
-                console.log(this.tableData)
                 this.length_ = data.data[1]
             })
             .catch(err => {

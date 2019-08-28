@@ -10,19 +10,9 @@
                     ></el-input>
                     <el-button
                         type="primary"
-                        v-on:click="inbox_count()"
+                        @click="inbox_count()"
                     >搜索</el-button>
                     <nav>
-                        <!-- <el-button
-                            v-on:click="inbox_count('收件箱')"
-                            :type="active_c == '收件箱'?'info': ''"
-                        >收件箱</el-button> -->
-                        <!-- <el-button
-                            icon="el-icon-star-on"
-                            v-on:click="inbox_count('标星箱')"
-                            :type="active_c == '标星箱'?'info': ''"
-                        >标星箱</el-button> -->
-                        <!-- <el-button v-on:click="cust_">自定义</el-button> -->
                         <el-select
                             v-model="remove_2"
                             placeholder="自定义文件夹"
@@ -36,30 +26,18 @@
                             >
                             </el-option>
                         </el-select>
-                        <!-- <el-button
-                            v-on:click="inbox_count('草稿箱')"
-                            :type="active_c == '草稿箱'?'info': ''"
-                        > 草稿箱</el-button>
-                        <el-button
-                            v-on:click="inbox_count('已发送')"
-                            :type="active_c == '已发送'?'info': ''"
-                        >已发送</el-button>
-                        <el-button
-                            v-on:click="inbox_count('已删除')"
-                            :type="active_c == '已删除'?'info': ''"
-                        >已删除</el-button> -->
                     </nav>
                 </div>
                 <div class="f">
                     <el-button
-                        v-on:click="customize_management"
+                        @click="customize_management"
                         v-show="customize == true"
                         icon="el-icon-setting"
                         class="management_"
                     >管理</el-button>
                     <el-radio-group
                         v-model="search_.radio"
-                        v-on:change="d"
+                        @change="d"
                         class="radio_"
                     >
                         <el-radio label="1">全部（默认）</el-radio>
@@ -67,11 +45,10 @@
                         <el-radio label="3">未读</el-radio>
                     </el-radio-group>
                     <div class="operate_">
-                        <el-button v-on:click="readed()">当前页标示已读</el-button>
-                        <!-- <el-button v-on:click="search_s()">全选</el-button> -->
-                        <el-button v-on:click="toggleSelection()">反选</el-button>
-                        <el-button v-on:click="move('已删除')">删除</el-button>
-                        <el-button v-on:click="detele_true()">彻底删除</el-button>
+                        <el-button @click="readed()">当前页标示已读</el-button>
+                        <el-button @click="toggleSelection()">反选</el-button>
+                        <el-button @click="move('已删除')">删除</el-button>
+                        <el-button @click="detele_true()">彻底删除</el-button>
                     </div>
                     <!-- 标记为 -->
                     <el-select
@@ -208,7 +185,7 @@
         >
             <el-button
                 class="management_create"
-                v-on:click="create_folder"
+                @click="create_folder"
                 type="primary"
                 plain
             >新建文件夹</el-button>
@@ -328,20 +305,6 @@ export default {
                         label: '全部'
                     }
                 ],
-                // ot: [
-                //     {
-                //         value: 'readed',
-                //         label: '屈臣氏'
-                //     },
-                //     {
-                //         value: 'unread',
-                //         label: '信用卡'
-                //     },
-                //     {
-                //         value: 'icon_',
-                //         label: '沃尔玛'
-                //     },
-                // ],
             },
             table_: [
                 {

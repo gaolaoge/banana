@@ -225,6 +225,7 @@ export default {
                     }
                     Cookie.set('token', data.data.userId)
                     Cookie.set('user_level', data.data.type)
+                    sessionStorage.setItem('im',JSON.stringify(data.data.IM))
                     this.$router.replace('/main_module')
                 }).catch(e => {
                     console.log('登录错误：' + e)

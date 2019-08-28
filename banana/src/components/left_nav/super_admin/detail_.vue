@@ -15,54 +15,55 @@
                     <el-form-item label="公司名称">
                         <el-input
                             v-model="form.enterpriseName"
-                            v-bind:readonly="detail_e.type == 'check'"
+                            :readonly="detail_e.type == 'check'"
                         >
                         </el-input>
                     </el-form-item>
                     <el-form-item label="所属地区">
                         <el-input
                             v-model="form.firmRegion"
-                            v-bind:readonly="detail_e.type == 'check'"
+                            :readonly="detail_e.type == 'check'"
                         >
                         </el-input>
                     </el-form-item>
                     <el-form-item label="法人单位性质">
                         <el-input
                             v-model="form.firmNature"
-                            v-bind:readonly="detail_e.type == 'check'"
+                            :readonly="detail_e.type == 'check'"
                         >
                         </el-input>
                     </el-form-item>
                     <el-form-item label="注册资金">
                         <el-input
                             v-model="form.registeredFund"
-                            v-bind:readonly="detail_e.type == 'check'"
+                            :readonly="detail_e.type == 'check'"
                         >
                         </el-input>
                     </el-form-item>
                     <el-form-item label="法人代表">
                         <el-input
                             v-model="form.legalName"
-                            v-bind:readonly="detail_e.type == 'check'"
+                            :readonly="detail_e.type == 'check'"
                         >
                         </el-input>
                     </el-form-item>
                     <el-form-item label="注册号">
                         <el-input
                             v-model="form.firmNumber"
-                            v-bind:readonly="detail_e.type == 'check'"
+                            :readonly="detail_e.type == 'check'"
                         >
                         </el-input>
                     </el-form-item>
                     <el-form-item label="联系电话">
                         <el-input
                             v-model="form.firmPhone"
-                            v-bind:readonly="detail_e.type == 'check'"
+                            :readonly="detail_e.type == 'check'"
                         >
                         </el-input>
                     </el-form-item>
                 </el-form>
             </article>
+            {{ form2.nul }}
             <article class="f">
                 <header>
                     <h5 class="title">
@@ -77,7 +78,7 @@
                     <el-form-item label="部门">
                         <el-select
                             v-model="form2.adminDepartment"
-                            disabled="detail_e.type == 'check'"
+                            :disabled="detail_e.type == 'check'"
                         >
                             <el-option
                                 v-for="item in part"
@@ -113,13 +114,13 @@
                     <el-form-item label="权限设置">
                         <el-checkbox-group
                             v-model="form2.nul"
-                            v-bind:min="1"
+                            :min="1"
                         >
                             <el-checkbox
                                 v-for="item_ in type_"
-                                v-bind:key="item_.key"
-                                v-bind:label="item_.label"
-                                v-bind:name="item_.name"
+                                :key="item_.key"
+                                :label="item_.label"
+                                :name="item_.name"
                             >{{ item_.v }}</el-checkbox>
                         </el-checkbox-group>
                     </el-form-item>
@@ -130,9 +131,9 @@
                                 <el-slider
                                     v-model="form2.totalSpace"
                                     :marks="form2.marks"
-                                    v-bind:max="200"
+                                    :max="200"
                                     show-input
-                                    disabled="detail_e.type == 'check'"
+                                    :disabled="detail_e.type == 'check'"
                                 >
                                 </el-slider>
                             </div>
@@ -207,36 +208,7 @@ export default {
                     name: 'power'
                 },
             ],
-            part: [
-                {
-                    value: '产品部',
-                    label: '产品部'
-                },
-                {
-                    value: '人事部',
-                    label: '人事部'
-                },
-                {
-                    value: '后勤部',
-                    label: '后勤部'
-                },
-                {
-                    value: '市场部',
-                    label: '市场部'
-                },
-                {
-                    value: '研发部',
-                    label: '研发部'
-                },
-                {
-                    value: '营销部',
-                    label: '营销部'
-                },
-                {
-                    value: '设计部',
-                    label: '设计部'
-                },
-            ]
+            part: []
         }
     },
     methods: {
@@ -262,11 +234,15 @@ export default {
         ...mapState(['detail_e'])
     },
     created() {
-
+        Object.keys(JSON.parse(sessionStorage.employees)).forEach(curr_ => {
+            this.part.push({
+                value: curr_,
+                label: curr_
+            })
+        })
         let s = `name=${this.detail_e.name}&id=${this.detail_e.id}&firmKEY=${this.detail_e.firmKEY}`
         detail_G(s)
             .then(data => {
-                console.log(data.data)
                 this.form = data.data[0]
                 this.form2 = data.data[1]
                 this.form2.totalSpace = Number(this.form2.totalSpace)

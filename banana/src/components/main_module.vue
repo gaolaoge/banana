@@ -10,11 +10,13 @@
             v-if="login_head.showBox"
             return-type="url"
         ></avatar-cutter>
+        <im />
     </div>
 </template>
 
 <script>
 
+import IM from '@/components/layim'
 import Cookie from 'js-cookie'
 import module_left from '@/components/module_left'
 import module_top from '@/components/module_top'
@@ -33,6 +35,7 @@ export default {
         'moduleleft': module_left,
         'moduletop': module_top,
         "avatar-cutter": AvatarCutter,
+        'im': IM
     },
     computed: {
         ...mapState(['login_head']),
@@ -56,11 +59,9 @@ export default {
                     z[Object.keys(currentVal)[0]] = Object.values(currentVal)[0]
                 })
                 sessionStorage.setItem('employees',JSON.stringify(z))
-                // this.change_baseData(z)
             })
     },
     methods: {
-        // ...mapMutations(['changeShowState','change_baseData'])
         ...mapMutations(['changeShowState'])
     }
 }

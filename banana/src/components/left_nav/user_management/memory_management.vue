@@ -277,11 +277,6 @@ export default {
                 byteUnits: 'MB',
                 reason: ''
             },
-            // search: {
-            //     data_type: '',
-            //     date_up: '',
-            //     date_down: '',
-            // },
             type_all: [
                 {
                     val: 'all',
