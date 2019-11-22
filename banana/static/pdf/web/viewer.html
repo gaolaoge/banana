@@ -42,9 +42,10 @@ See https://github.com/adobe-type-tools/cmap-resources
     <script src="../build/pdf.js"></script>
 
     <script type="text/javascript">
-      var DEFAULT_URL = "";
+      // var DEFAULT_URL = "";
       var pdfUrl = document.location.search.substring(1);
       if (null == pdfUrl || "" == pdfUrl) {
+        console.log('y')
         var BASE64_MARKER = ";base64,"; //声明文件流编码格式
         var preFileId = "";
         var pdfAsDataUri = "";
@@ -63,9 +64,6 @@ See https://github.com/adobe-type-tools/cmap-resources
           return array;
         }
       }
-      setTimeout(function(){
-        pageToUrl("page/pdf/viewer", true);
-      },0)
     </script>
 
     <script src="viewer.js"></script>

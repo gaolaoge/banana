@@ -11,6 +11,7 @@
             return-type="url"
         ></avatar-cutter>
         <im />
+
     </div>
 </template>
 
@@ -28,7 +29,7 @@ export default {
     name: 'main_module',
     data() {
         return {
-
+            im_status: false
         }
     },
     components: {
@@ -41,29 +42,19 @@ export default {
         ...mapState(['login_head']),
     },
     created() {
-        //此处进行token验证
-        let s = Cookie.get('token'),
-            this_ = this
-        if (!s) {
-            this.$message.error('尚未登录')
-            setTimeout(() => {
-                this_.$router.replace('/')
-            }, 3000)
-            return false
-        }
         //获取基本数据
-        baseData({'data': 'data'})
+        baseData({ 'data': 'data' })
             .then(data => {
                 let z = {}
                 data.data.forEach((currentVal) => {
                     z[Object.keys(currentVal)[0]] = Object.values(currentVal)[0]
                 })
-                sessionStorage.setItem('employees',JSON.stringify(z))
+                sessionStorage.setItem('employees', JSON.stringify(z))
             })
     },
     methods: {
         ...mapMutations(['changeShowState'])
-    }
+    },
 }
 </script>
 

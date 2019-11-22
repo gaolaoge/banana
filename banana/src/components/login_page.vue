@@ -158,14 +158,18 @@
 <script>
 
 import verify from '@/components/verify_input'
-import Cookie from 'js-cookie'
 import { mapState } from 'vuex'
+import axios from 'axios'
+import {
+    send_account,
+    send_password
+} from '@/api/api_base'
 
 export default {
     name: 'login_page',
     data() {
         return {
-            account: 'xf_admin',
+            account: 'cust_test',
             password: '0000',
             verify_input: '',
             remember_account: true,
@@ -185,10 +189,6 @@ export default {
         ...mapState({
             login_: state => state.login_page
         }),
-        
-    },
-    watch: {
-
     },
     mounted() {
         this.verify_input = this.login_.verify_input
@@ -213,20 +213,21 @@ export default {
                 return false;
             }
             //发送AJAX  
-            this.$axios.post(this.wangqiang + '/login/verify.do', {
+            send_password({
                 username: this.account,
                 password: this.password
             })
                 .then(data => {
-                    // console.log(data)
                     if (data.data === 0) {
                         this.$message.error('账号或密码填写错误')
                         return false
                     }
-                    Cookie.set('token', data.data.userId)
-                    Cookie.set('user_level', data.data.type)
+                    sessionStorage.setItem('class',data.data.type)
+                    sessionStorage.setItem('logIn',data.data.userId)
+                    axios.defaults.headers.common['token'] = data.data.userId
                     sessionStorage.setItem('im',JSON.stringify(data.data.IM))
-                    this.$router.replace('/main_module')
+                    sessionStorage.setItem('offlineMessage',JSON.stringify(data.data.other))
+                    this.$router.push({path:'/main_module'})
                 }).catch(e => {
                     console.log('登录错误：' + e)
                 })
@@ -242,14 +243,14 @@ export default {
                 this.$message.error('需找回的账号未输入')
                 return false
             }
-            this.$axios.get(this.wangqiang + '/login/reset.do?data=' + this.account_num)
-                .then(function (data) {
+            send_account(`data=${this.account_num}`)
+                .then(data => {
 
                     this.fir_show = false
                     this.sec_show = true
                     this.self_height = 'verify_account_height'
                 })
-                .catch(function () {
+                .catch(err => {
                     this.$message.error('账号输入有误')
                     return false
                 })
@@ -276,15 +277,11 @@ export default {
                 this.$message.error('信息填写不完整')
                 return false
             }
-            // if( this.verify_num !== this.return_verify_num ){
-            //   this.$message.error('验证码错误');
-            //   return false;
-            // }
             if (this.set_newPassWord !== this.again_nrePassWord) {
                 this.$message.error('两次密码输入不同')
                 return false
             }
-            this.$axios.post(this.wangqiang + '/login/verify.do', {
+            send_password({
                 newPassWord: this.set_newPassWord
             })
                 .then(function (data) {

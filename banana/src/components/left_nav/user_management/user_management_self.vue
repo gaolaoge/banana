@@ -1,7 +1,7 @@
 <template>
     <div class="user_management_self">
         <div class="container">
-
+            
             <div class="main_form">
                 <el-form
                     ref="form"
@@ -234,7 +234,7 @@ export default {
                 new_password: '',
                 new_password_again: ''
             },
-            direction: 'horizontal',
+            direction: '',
             hint: {
                 state: 0
             },
@@ -388,7 +388,7 @@ export default {
         },
         //步骤条布局
         window_size() {
-            if (document.documentElement.clientWidth < 1300) {
+            if (document.documentElement.clientWidth < 1400) {
                 this.direction = "vertical"
             } else {
                 this.direction = "horizontal"
@@ -461,7 +461,7 @@ export default {
             line-height: 2.4em;
         }
     }
-    @media screen and (max-width: 1300px) {
+    @media screen and (max-width: 1400px) {
         width: 90%;
         font-size: 0px;
 

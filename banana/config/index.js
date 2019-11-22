@@ -11,8 +11,15 @@ module.exports = {
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: {
+      // '/wangqiang': {
+      //   target: 'http://localhost:8080',
+      //   changeOrigin: true,
+      //   pathRewrite: {
+      //     '^/': '/'
+      //   }
+      // },
       '/wangqiang': {
-        target: 'http://192.168.1.89:8080',
+        target: 'http://192.168.1.156:8080',
         changeOrigin: true,
         pathRewrite: {
           '^/wangqiang': '/'
@@ -35,7 +42,7 @@ module.exports = {
     notifyOnErrors: true,
     poll: false, // https://webpack.js.org/configuration/dev-server/#devserver-watchoptions-
 
-    
+
     /**
      * Source Maps
      */

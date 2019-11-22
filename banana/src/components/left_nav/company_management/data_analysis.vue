@@ -7,7 +7,7 @@
                     <ve-pie
                         :data="chartData_o"
                         :settings="chartSettings_"
-                        width="200px"
+                        width="240px"
                         height="200px"
                         :legend-visible="false"
                     ></ve-pie>
@@ -16,7 +16,7 @@
                     <ve-pie
                         :data="chartData_t"
                         :settings="chartSettings_"
-                        width="200px"
+                        width="240px"
                         height="200px"
                         :legend-visible="false"
                     ></ve-pie>
@@ -25,13 +25,13 @@
                     <ve-pie
                         :data="chartData_th"
                         :settings="chartSettings_"
-                        width="200px"
+                        width="240px"
                         height="200px"
                         :legend-visible="false"
                     ></ve-pie>
                 </div>
 
-                <el-button class="v">生成图表</el-button>
+                <!-- <el-button class="v">生成图表</el-button> -->
             </div>
             <div class="pic">
                 <div class="pic_n">
@@ -61,18 +61,28 @@
                     >
                     </el-date-picker>
                     <div style="float: right; margin-right: 12px;">
-                        <el-button>柱状图</el-button>
-                        <el-button>趋势图</el-button>
+                        <el-button
+                            :class="{'primary': !showMore}"
+                            @click="showMore = false"
+                        >柱状图</el-button>
+                        <el-button
+                            :class="{'primary': showMore}"
+                            @click="showMore = true"
+                        >趋势图</el-button>
                     </div>
                 </div>
                 <ve-histogram
                     :data="chartData"
                     :settings="chartSettings"
+                    :extend="chartExtend"
                 ></ve-histogram>
                 <!-- {{ chartData }} -->
             </div>
             <div class="bu">
-                <el-button class="e" @click="download_">下载报表</el-button>
+                <el-button
+                    class="e"
+                    @click="download_"
+                >下载报表</el-button>
             </div>
             <el-table
                 :data="tableData"
@@ -96,9 +106,13 @@
                             trigger="hover"
                             placement="top"
                         >
-                            <p v-for="i_ in scope.row.items" :key="i_.part" style="line-height: 3.8em">
+                            <p
+                                v-for="i_ in scope.row.items"
+                                :key="i_.part"
+                                style="line-height: 3.8em"
+                            >
                                 <img
-                                    :src= i_.url
+                                    :src=i_.url
                                     alt=""
                                     style="width: 40px;height: 40px;border-radius: 50%"
                                 >
@@ -120,17 +134,6 @@
                 >
                 </el-table-column>
             </el-table>
-            <!-- <el-pagination
-                @size-change="handleSizeChange"
-                @current-change="handleCurrentChange"
-                :current-page="currentPage4"
-                :page-sizes="[10, 20, 30, 40]"
-                :page-size="1"
-                layout="total, sizes, prev, pager, next, jumper"
-                :total="100"
-                class="pa_"
-            >
-            </el-pagination> -->
         </div>
     </div>
 </template>
@@ -148,13 +151,19 @@ export default {
     data() {
         this.chartSettings = {
             showLine: ['上月对应数据']
-        },
+        }
         this.chartSettings_ = {
             roseType: 'radius',
             radius: 40,
             offsetY: 100,
         }
+        this.chartExtend = {
+            legend: {
+                top: 20,
+            },
+        }
         return {
+            showMore: false,            //柱状图和趋势图的切换
             chartData_o: {
                 columns: ['日期', '数量'],
                 rows: [
@@ -176,93 +185,13 @@ export default {
                     { '日期': '其它', '数量': 0 }
                 ]
             },
-            options: [
-                {
-                    value: '',
-                    label: '全部'
-                },
-                {
-                    value: 'ppt',
-                    label: 'ppt'
-                },
-                {
-                    value: 'pdf',
-                    label: 'pdf'
-                },
-                {
-                    value: 'word',
-                    label: 'word'
-                },
-                {
-                    value: 'excel',
-                    label: 'excel'
-                },
-                {
-                    value: 'HTML',
-                    label: 'HTML'
-                },
-                {
-                    value: 'exe',
-                    label: 'exe'
-                },
-                {
-                    value: 'jpg',
-                    label: 'jpg'
-                },
-                {
-                    value: 'png',
-                    label: 'png'
-                },
-                {
-                    value: 'psd',
-                    label: 'psd'
-                },
-                {
-                    value: '其他',
-                    label: '其他'
-                },
-            ],                      //数据类型
-            options_: [
-                {
-                    value: '',
-                    label: '全部'
-                },
-                {
-                    value: '产品部',
-                    label: '产品部'
-                },
-                {
-                    value: '人事部',
-                    label: '人事部'
-                },
-                {
-                    value: '后勤部',
-                    label: '后勤部'
-                },
-                {
-                    value: '市场部',
-                    label: '市场部'
-                },
-                {
-                    value: '研发部',
-                    label: '研发部'
-                },
-                {
-                    value: '营销部',
-                    label: '营销部'
-                },
-                {
-                    value: '设计部',
-                    label: '设计部'
-                },
-            ],                      //部门
             chartData: {
-                columns: ['日期', '本月数据', '上月对应数据'],
+                columns: ['日期', '本月数据'],
                 rows: [
                     // { '日期': '1/1', '访问用户': 1393 },
                 ]
             },
-            data_date: '',         //下拉框
+            data_date: 'thisMonth',         //下拉框
             data_dates: [
                 {
                     value: 'thisMonth',
@@ -281,9 +210,21 @@ export default {
             tableData: []
         }
     },
+    watch: {
+        showMore(v) {
+            if (v) {
+                if (this.chartData.columns.length == 2) {
+                    this.chartData.columns.push('上月对应数据')
+                }
+                this.chartData.columns[2] = '上月对应数据'
+            } else {
+                this.chartData.columns.splice(2, 1)
+            }
+        }
+    },
     methods: {
-        download_(){
-            DataAnalyzeC({'data':'data'})
+        download_() {
+            DataAnalyzeC({ 'data': 'data' })
                 .then(data => {
                     const a = document.createElement('a')
                     a.style.display = 'none'
@@ -295,12 +236,9 @@ export default {
                 })
         },
         time_() {
-            // console.log(this.timeInterval)
             this.data_date = ''
             let t = `${this.timeInterval[0]},${this.timeInterval[1]}`
             this.change_date(t)
-            // this.timeInterval = null
-            // console.log(t)
         },
         change_date(f) {
             const self_ = this
@@ -309,7 +247,6 @@ export default {
             }
             DataAnalyzeB({ 'time': f })
                 .then(data => {
-                    // console.log(data)
                     self_.chartData.rows = []
                     let len = Object.keys(data.data[0]).length
                     Object.keys(data.data[0]).forEach(currentVal => {
@@ -318,6 +255,7 @@ export default {
                             val = data.data[0][currentVal].length
                         self_.chartData.rows.push({ '日期': key, '本月数据': val })
                         if (val) {
+                            self_.tableData = []
                             var cap = 0,
                                 it_ = []
                             for (var i = 0; i < val; i++) {
@@ -332,8 +270,6 @@ export default {
                                 newNum: val,
                                 capacity: cap + 'GB',
                                 items: it_,
-                                // header: 
-
                             })
                         }
                     })
@@ -357,7 +293,7 @@ export default {
                 self_.chartData_th.rows[0]['数量'] = data.data.beforeMonths
                 self_.chartData_th.rows[1]['数量'] = data.data.beforeMonthsSum
             })
-        self_.change_date('')
+        self_.change_date('thisMonth')
     }
 }
 </script>
@@ -400,9 +336,20 @@ export default {
             text-align: center;
             padding: 10px;
         }
+        .primary {
+            background: #409eff;
+            color: #fff;
+        }
     }
 }
 .tab_ {
     margin-bottom: 40px;
+}
+@media screen and (max-width: 1400px) {
+    .data_analysis {
+        .wrapper {
+            width: 99%;
+        }
+    }
 }
 </style>

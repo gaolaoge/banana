@@ -27,12 +27,8 @@
                     <ul>
                         <router-link
                             tag="li"
-                            to="/personal_center"
+                            to="/user_management/user_management_self"
                         >修改个人信息</router-link>
-                        <router-link
-                            tag="li"
-                            to=""
-                        >修改密码</router-link>
                         <li @click="drop_out">退出登录</li>
                     </ul>
                 </div>
@@ -57,6 +53,7 @@ export default {
             nav_list: false,
         }
     },
+    
     methods: {
         show_list() {
             this.nav_list = !this.nav_list;
@@ -71,7 +68,8 @@ export default {
                 type: 'error'
             }).then(() => {
                 sessionStorage.clear()
-                this.$router.push('/')
+                // this.$router.push('/')
+                location.href = '/'
                 this.$message({
                     type: 'success',
                     message: '已退出登录!'
@@ -93,9 +91,10 @@ export default {
     position: relative;
     height: 60px;
     box-shadow: 0px 1px 1px 1px rgba(240, 240, 240, 0.5);
-    /* background-image: linear-gradient(to right,#2d416b,#2d9ddd); */
-    background: #23262e;
+    background-image: linear-gradient(to right,#2d416b,#2d9ddd);
+    /* background: #23262e; */
     padding: 0px 20px;
+    /* z-index: 999; */
 }
 .module_top .left,
 .module_top .right,
@@ -132,6 +131,8 @@ export default {
 }
 .nav_list {
     box-shadow: 0px 0px 4px 0px #ccc;
+    position: relative;
+    z-index: 999;
 }
 .nav_list li {
     list-style: none;

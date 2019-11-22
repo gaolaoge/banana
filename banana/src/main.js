@@ -16,8 +16,6 @@ Vue.config.productionTip = false
 axios.defaults.withCredentials = true
 
 Vue.prototype.$axios = axios
-Vue.prototype.wangqiang = '/wangqiang'
-Vue.prototype.jiabingqian = '/jiabingqian'
 
 Vue.use(VueResource)
 Vue.use(ElementUI)

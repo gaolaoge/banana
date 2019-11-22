@@ -1,18 +1,10 @@
 <template>
     <div class="statistics">
         <div class="wrapper">
-            <!-- <div class="sear_">
-                <el-input
-                    v-model="input_"
-                    placeholder="输入部门名称"
-                    class="input_"
-                ></el-input>
-                <el-button v-on:click="search_">搜索</el-button>
-            </div> -->
             <div class="c_">
                 <el-button
                     class="create_"
-                    v-on:click="dialog = true"
+                    v-on:click="open_create"
                 >
                     新建部门
                 </el-button>
@@ -26,23 +18,24 @@
                         <ve-ring
                             :data="item.data"
                             :settings="chartSettings"
+                            :extend="chartExtend"
                             width="280px"
-                            height="320px"
+                            height="280px"
                             :legend-visible="false"
                         ></ve-ring>
                         <h3 class="department_n">
                             {{ item.info.department_name }}
                         </h3>
                         <div class="inf_">
-                            <span>总容量{{ item.info.total }}TB</span>
-                            <span>剩余{{ item.info.surplus }}TB</span>
+                            <span>总容量{{ item.info.total }}GB</span>
+                            <span>剩余{{ item.info.surplus }}GB</span>
                             <span>组员{{ item.info.people_num }}人</span>
                         </div>
                     </li>
                 </ul>
             </div>
         </div>
-        <el-dialog
+        <!-- <el-dialog
             title="新建部门"
             :visible.sync="dialog"
         >
@@ -56,8 +49,8 @@
                         autocomplete="off"
                         class="inp_"
                     ></el-input>
-                </el-form-item>
-                <div class="d">
+                </el-form-item> -->
+        <!-- <div class="d">
                     <el-button
                         class="b_"
                         v-on:click="form.total=10"
@@ -85,8 +78,8 @@
                         >
                         </el-slider>
                     </div>
-                </el-form-item>
-            </el-form>
+                </el-form-item> -->
+        <!-- </el-form>
             <div
                 slot="footer"
                 class="dialog-footer"
@@ -97,14 +90,16 @@
                     @click="p()"
                 >确 定</el-button>
             </div>
-        </el-dialog>
+        </el-dialog> -->
     </div>
 </template>
 
 <script>
 
-import {    department_info,
-    post_depart} from '@/api/api_base'
+import {
+    department_info,
+    post_depart
+} from '@/api/api_base'
 
 export default {
     name: 'statistics',
@@ -116,58 +111,62 @@ export default {
             label: {
                 show: false,
             },
-            itemStyle: {
-                // color: 'tomato'
-            }
+            offsetY: 160,
+        }
+        this.chartExtend = {
+            legend: {
+                top: 0,
+            },
         }
         return {
             dialog: false,
             input_: '',
             chartData: [],
-            form: {
-                department_name: '',
-                total: 1
-            },
-            marks: {
-                // 0: '0T',
-                // 8: '8T',
-                // 37: '37T',
-                // 50: {
-                //     style: {
-                //         color: '#1989FA'
-                //     },
-                //     label: this.$createElement('strong', '50%')
-                // },
-                100: '100TB',
-                // 300: '300TB',
-                500: {
-                    style: {
-                        color: '#1989FA'
-                    },
-                    label: this.$createElement('strong', '500TB')
-                },
-            }
+            // marks: {
+            //     100: '100TB',
+            //     500: {
+            //         style: {
+            //             color: '#1989FA'
+            //         },
+            //         label: this.$createElement('strong', '500TB')
+            //     },
+            // }
         }
     },
     methods: {
-        // search_() {
-
-        // },
-        p() {
-            post_depart({ 'deparmentSpace': this.form.total, 'department': this.form.department_name })
-                .then(data => {
-                    if (data.data == 0) {
-                        this.$message.error('部门名称重复')
+        // 新建
+        open_create() {
+            this.$prompt('请输入新部门名称', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+            })
+                .then(value => {
+                    if (value.value = ' ') {
+                        this.$message({
+                            type: 'info',
+                            message: '部门名称不能为空'
+                        });
                         return false
                     }
-                    this.$message({
-                        message: '添加成功',
-                        type: 'success',
-                        center: true
-                    })
-                    this.dialog = false
-                    this.c()
+                    post_depart({ 'deparmentSpace': null, 'department': value.value })
+                        .then(data => {
+                            if (data.data == 0) {
+                                this.$message.error('部门名称重复')
+                                return false
+                            }
+                            this.$message({
+                                type: 'success',
+                                message: '新部门' + value.value + '创建成功'
+                            });
+                            this.c()
+                        })
                 })
+                .catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '取消创建'
+                    });
+                });
         },
         c() {
             department_info({ 'data': 'data' })
@@ -225,7 +224,6 @@ export default {
         .c_ {
             margin: 10px auto;
             height: 50px;
-            width: 800px;
             .create_ {
                 float: right;
             }
@@ -234,7 +232,7 @@ export default {
             ul {
                 display: flex;
                 flex-wrap: wrap;
-                // justify-content: space-around;
+                justify-content: space-around;
                 li {
                     position: relative;
                     list-style: none;
@@ -246,7 +244,7 @@ export default {
                     }
                     .inf_ {
                         position: absolute;
-                        top: 180px;
+                        top: 130px;
                         left: 104px;
                         span {
                             display: block;
@@ -264,18 +262,21 @@ export default {
 }
 .block {
     width: 600px;
-    // margin-top: 50px;
     margin-left: 10px;
 }
 .d {
-    // display: flex;
-    // justify-content: space-around;
-    // text-align: center;
     padding-left: 120px;
     margin: 32px 0px;
     .b_ {
         width: 120px;
         height: 50px;
+    }
+}
+@media screen and (max-width: 1480px) {
+    .statistics {
+        .wrapper {
+            width: 97%;
+        }
     }
 }
 </style>

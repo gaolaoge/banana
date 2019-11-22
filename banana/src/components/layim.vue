@@ -13,9 +13,9 @@ export default {
     created() {
         let t = JSON.parse(sessionStorage.getItem('im')),
             self_ = t['个人信息'],
-            friend_group = t['好友列表'],
+            friend_group = t['好友列表'] || [],
             fri_ = [],
-            group_r = t['群组列表'],
+            group_r = t['群组列表'] || [],
             group_ = []
         // console.log(group_r)
         //循环添加好友
@@ -47,7 +47,6 @@ export default {
         })
 
         layui.use('layim', function (layim) {
-            //先来个客服模式压压精
             layim.config({
                 brief: false,        //是否简约模式（如果true则不显示主面板）
                 title: self_.userName,
@@ -97,30 +96,42 @@ export default {
                 find: '/find'
 
             })
+            let socket_ = new WebSocket(`ws://192.168.1.156:8080/websocket?id=${JSON.parse(sessionStorage.getItem('im'))['个人信息'].userId}`)
 
-            let socket_ = new WebSocket(`ws://192.168.1.90:8089/websocket?id=${JSON.parse(sessionStorage.getItem('im'))['个人信息'].userId}`)
-
-            socket_.addEventListener('open',function(){
-                // socket_.send(JSON.stringify({
-                //     type: 'string',
-                //     data: JSON.parse(sessionStorage.getItem('im'))['个人信息'].userId
-                // }))
-
-                // console.log('socket_')
-
-                // socket_.onopen = function(){
-                //     console.log('socket_success')
-                // }
-
-                // socket_.onmessage = function(res){
-                //     console.log('result:' + res)
+            socket_.addEventListener('open', function () {
+                // if (Object.keys(sessionStorage.getItem(offlineMessage)[0]).length) {
+                    JSON.parse(sessionStorage.getItem('offlineMessage')).forEach(curr_ => {
+                        layim.getMessage({
+                            username: curr_.username,
+                            avatar: curr_.receiverHead, 
+                            id: curr_.senderId, 
+                            type: curr_.type, 
+                            content: curr_.chattingContent, 
+                            cid: 0, 
+                            mine: false,
+                            fromid: curr_.senderId, 
+                            timestamp: curr_.recordTime
+                        })
+                    })
                 // }
             })
 
             // 接收消息
-            socket_.addEventListener('message',function(res){
-                // res = JSON.parse(res)
-                console.log(res)
+            socket_.addEventListener('message', function (res) {
+                let data = JSON.parse(res.data)
+                if (res.type == 'message') {
+                    layim.getMessage({
+                        username: data.username, // "纸飞机" //消息来源用户名
+                        avatar: data.avatar, //消息来源用户头像
+                        id: data.type == 'friend' ? data.fromid : data.id, // "100000" //消息的来源ID（如果是私聊，则是用户id，如果是群聊，则是群组id）
+                        type: data.type, //聊天窗口来源类型，从发送消息传递的to里面获取
+                        content: data.content, // "嗨，你好！本消息系离线消息。" //消息内容
+                        cid: 0, //消息id，可不传。除非你要对消息进行一些操作（如撤回）
+                        mine: false, //是否我发送的消息，如果为true，则会显示在右方
+                        fromid: data.fromid, //data.id //"100000" //消息的发送者id（比如群组中的某个消息发送者），可用于自动解决浏览器多窗口时的一些问题
+                        timestamp: data.timestamp, //服务端时间戳毫秒数。注意：如果你返回的是标准的 unix 时间戳，记得要 *1000
+                    });
+                }
             })
 
             // socket_.onerror = function(e){
@@ -128,10 +139,7 @@ export default {
             // }
 
             // 发送消息
-            layim.on('sendMessage',function(res){
-                res.mine.avatar = ''
-                res.to.avatar = ''
-                // console.log(res)
+            layim.on('sendMessage', function (res) {
                 socket_.send(JSON.stringify({
                     type: 'chatMessage',
                     data: res

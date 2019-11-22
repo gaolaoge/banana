@@ -6,13 +6,13 @@
         >
             <el-row class="tac">
                 <el-col :span="24">
-                    <!-- background-color="#2d5988" -->
+                    <!-- background-color="#393D49" -->
                     <el-menu
                         default-active="1"
                         class="el-menu-vertical-demo"
                         @open="handleOpen"
                         @close="handleClose"
-                        background-color="#393D49"
+                        background-color="#2d5988"
                         text-color="#fff"
                         active-text-color="#ffd04b"
                         unique-opened
@@ -20,11 +20,15 @@
                         <el-menu-item
                             index="0"
                             @click="skip('console')"
+                            v-show="permission == 'S' || permission == 'A' || permission == 'B' || permission == 'C'"
                         >
                             <i class="el-icon-data-line"></i>
                             <span slot="title">总控</span>
                         </el-menu-item>
-                        <el-submenu index="1">
+                        <el-submenu
+                            index="1"
+                            v-if="permission == 'A'"
+                        >
                             <template slot="title">
                                 <i class="el-icon-menu"></i>
                                 <span>平台管理</span>
@@ -46,7 +50,10 @@
                             >{{ announcement_management }}</el-menu-item>
                         </el-submenu>
 
-                        <el-submenu index="2">
+                        <el-submenu
+                            index="2"
+                            v-show="permission == 'A' || permission == 'B' || permission == 'C'"
+                        >
                             <template slot="title">
                                 <i class="el-icon-s-cooperation"></i>
                                 <span>企业管理</span>
@@ -55,6 +62,7 @@
                                 index="2-1"
                                 @click="skip('Dashboard')"
                                 v-show="show_me"
+                                v-if="permission == 'A'"
                             >{{ Dashboard }}</el-menu-item>
                             <el-menu-item
                                 index="2-2"
@@ -65,20 +73,26 @@
                                 index="2-3"
                                 @click="skip('data_analysis')"
                                 v-show="show_me"
+                                v-if="permission == 'A'"
                             >{{ data_analysis }}</el-menu-item>
                             <el-menu-item
                                 index="2-4"
                                 @click="skip('statistics')"
                                 v-show="show_me"
+                                v-if="permission == 'A'"
                             >{{ statistics }}</el-menu-item>
                             <el-menu-item
                                 index="2-5"
                                 @click="skip('enterprise')"
                                 v-show="show_me"
+                                v-if="permission == 'A'"
                             >{{ enterprise }}</el-menu-item>
                         </el-submenu>
 
-                        <el-submenu index="3">
+                        <el-submenu
+                            index="3"
+                            v-if="permission == 'S' || permission == 'A' || permission == 'B' || permission == 'C'"
+                        >
                             <template slot="title">
                                 <i class="el-icon-s-check"></i>
                                 <span>用户管理</span>
@@ -87,6 +101,7 @@
                                 index="3-1"
                                 @click="skip('user_management_info')"
                                 v-show="show_me"
+                                v-if="permission == 'A'"
                             >{{ user_management_info }}</el-menu-item>
                             <el-menu-item
                                 index="3-2"
@@ -97,15 +112,20 @@
                                 index="3-3"
                                 @click="skip('batch_operation')"
                                 v-show="show_me"
+                                v-if="permission == 'A'"
                             >{{ batch_operation }}</el-menu-item>
                             <el-menu-item
                                 index="3-4"
                                 @click="skip('memory_management')"
                                 v-show="show_me"
+                                v-if="permission == 'B' || permission == 'C'"
                             >{{ memory_management }}</el-menu-item>
                         </el-submenu>
 
-                        <el-submenu index="4">
+                        <el-submenu
+                            index="4"
+                            v-if="permission == 'S'"
+                        >
                             <template slot="title">
                                 <i class="el-icon-document"></i>
                                 <span>超级管理</span>
@@ -122,7 +142,10 @@
                             >{{ company_add }}</el-menu-item>
                         </el-submenu>
 
-                        <el-submenu index="5">
+                        <el-submenu
+                            index="5"
+                            v-if="permission == 'A' || permission == 'B' || permission == 'C'"
+                        >
                             <template slot="title">
                                 <i class="el-icon-message"></i>
                                 <span>消息中心</span>
@@ -158,16 +181,10 @@
                                 v-show="show_me"
                             >{{ new_email }}</el-menu-item>
                         </el-submenu>
-
-                        <!-- <el-menu-item
+                        <el-submenu
                             index="6"
-                            @click="skip('resources_management')"
+                            v-if="permission == 'A' || permission == 'B' || permission == 'C'"
                         >
-                            <i class="el-icon-takeaway-box"></i>
-                            <span slot="title">{{ resources_management }}</span>
-                        </el-menu-item> -->
-
-                        <el-submenu index="6">
                             <template slot="title">
                                 <i class="el-icon-takeaway-box"></i>
                                 <span>资源管理</span>
@@ -176,40 +193,44 @@
                                 index="6-1"
                                 @click="skip('fixed_storage')"
                                 v-show="show_me"
+                                v-if="permission == 'B' || permission == 'C'"
                             >{{ fixed_storage }}</el-menu-item>
                             <el-menu-item
                                 index="6-2"
                                 @click="skip('temporary_storage')"
                                 v-show="show_me"
+                                v-if="permission == 'B' || permission == 'C'"
                             >{{ temporary_storage }}</el-menu-item>
                             <el-menu-item
                                 index="6-3"
                                 @click="skip('customize')"
                                 v-show="show_me"
+                                v-if="permission == 'B' || permission == 'C'"
                             >{{ customize }}</el-menu-item>
                             <el-menu-item
                                 index="6-4"
                                 @click="skip('shared_documents')"
                                 v-show="show_me"
+                                v-if="permission == 'B' || permission == 'C'"
                             >{{ shared_documents }}</el-menu-item>
-                            <!-- <el-menu-item
-                                index="6-5"
-                                @click="skip('internal_interwork')"
-                                v-show="show_me"
-                            >{{ internal_interwork }}</el-menu-item> -->
                             <el-menu-item
-                                index="6-6"
+                                index="6-5"
                                 @click="skip('document_retrieval')"
                                 v-show="show_me"
+                                v-if="permission == 'B' || permission == 'C'"
                             >{{ document_retrieval }}</el-menu-item>
                             <el-menu-item
-                                index="6-7"
+                                index="6-6"
                                 @click="skip('visual_analysis')"
                                 v-show="show_me"
+                                v-if="permission == 'A'"
                             >{{ visual_analysis }}</el-menu-item>
                         </el-submenu>
 
-                        <el-submenu index="7">
+                        <el-submenu
+                            index="7"
+                            v-if="permission == 'A' || permission == 'B' || permission == 'C'"
+                        >
                             <template slot="title">
                                 <i class="el-icon-search"></i>
                                 <span>搜索日志</span>
@@ -226,7 +247,10 @@
                             >{{ popular }}</el-menu-item>
                         </el-submenu>
 
-                        <el-submenu index="8">
+                        <el-submenu
+                            index="8"
+                            v-if="permission == 'A'"
+                        >
                             <template slot="title">
                                 <i class="el-icon-monitor"></i>
                                 <span>系统管理</span>
@@ -236,13 +260,13 @@
                                 @click="skip('date_management')"
                                 v-show="show_me"
                             >{{ date_management }}</el-menu-item>
-                            <el-menu-item
+                            <!-- <el-menu-item
                                 index="8-2"
                                 @click="skip('file_management')"
                                 v-show="show_me"
-                            >{{ file_management }}</el-menu-item>
+                            >{{ file_management }}</el-menu-item> -->
                             <el-menu-item
-                                index="8-3"
+                                index="8-2"
                                 @click="skip('message_management')"
                                 v-show="show_me"
                             >{{ message_management }}</el-menu-item>
@@ -278,7 +302,7 @@ export default {
             customize: '自定义',
             temporary_storage: '临时存储',
             fixed_storage: '固定存储',
-            new_email: '写邮件',
+            new_email: '新邮件',
             enterprise: '企业文件',
             statistics: '部门统计',
             resources_management: '资源管理',
@@ -286,9 +310,9 @@ export default {
             record: '搜索记录',
             popular: '热门搜索',
             system: '系统管理',
-            file_management: '文件容量管理',
+            // file_management: '文件容量管理',
             message_management: '消息清理管理',
-            date_management: '存储时间管理',
+            date_management: '文件储存管理',
             announcement_management: '公告管理',
             download_management: '数据下载管理',
             data_analysis: '数据分析',
@@ -316,6 +340,8 @@ export default {
             show_me: true,                          //主菜单隐藏时隐藏导航
             extend: false,
             console: '控制台',
+            fixedSee: '共享文件',
+            404: '未知路径'
 
         }
     },
@@ -331,141 +357,181 @@ export default {
             let this_ = this;
             switch (z) {
                 case 'enterprise':
-                    this_.$router.replace('/company_management/enterprise');
+                    this_.$router.push('/company_management/enterprise');
                     break;
                 case 'statistics':
-                    this_.$router.replace('/company_management/statistics');
+                    this_.$router.push('/company_management/statistics');
                     break;
                 case 'record':
-                    this_.$router.replace('/log_retrieval/record');
+                    this_.$router.push('/log_retrieval/record');
                     break;
                 case 'popular':
-                    this_.$router.replace('/log_retrieval/popular');
+                    this_.$router.push('/log_retrieval/popular');
                     break;
                 case 'storage_management':
-                    this_.$router.replace('/platform_management/storage_management');
+                    this_.$router.push('/platform_management/storage_management');
                     break;
                 case 'download_management':
-                    this_.$router.replace('/platform_management/download_management');
+                    this_.$router.push('/platform_management/download_management');
                     break;
                 case 'announcement_management':
-                    this_.$router.replace('/platform_management/announcement_management');
+                    this_.$router.push('/platform_management/announcement_management');
                     break;
                 case 'Dashboard':
-                    this_.$router.replace('/company_management/Dashboard');
+                    this_.$router.push('/company_management/Dashboard');
                     break;
                 case 'address_book':
-                    this_.$router.replace('/company_management/address_book');
+                    this_.$router.push('/company_management/address_book');
                     break;
                 case 'data_analysis':
-                    this_.$router.replace('/company_management/data_analysis');
+                    this_.$router.push('/company_management/data_analysis');
                     break;
                 case 'user_management_info':
-                    this.$router.replace('/user_management/user_management_info');
+                    this.$router.push('/user_management/user_management_info');
                     break;
                 case 'user_management_self':
-                    this.$router.replace('/user_management/user_management_self');
+                    this.$router.push('/user_management/user_management_self');
                     break;
                 case 'batch_operation':
-                    this.$router.replace('/user_management/batch_operation');
+                    this.$router.push('/user_management/batch_operation');
                     break;
                 case 'memory_management':
-                    this.$router.replace('/user_management/memory_management');
+                    this.$router.push('/user_management/memory_management');
                     break;
                 case 'company_list':
-                    this.$router.replace('/super_admin/company_list');
+                    this.$router.push('/super_admin/company_list');
                     break;
                 case 'company_add':
-                    this.$router.replace('/super_admin/company_add');
+                    this.$router.push('/super_admin/company_add');
                     break;
 
                 case 'inbox':
-                    this.$router.replace('/message_center/inbox?state=inbox');
+                    this.$router.push({
+                        name: 'inbox',
+                        query: {
+                            state: 'inbox'
+                        }
+                    });
                     break;
                 case 'star_box':
-                    this.$router.replace('/message_center/inbox?state=star_box');
+                    this.$router.push({
+                        name: 'inbox',
+                        query: {
+                            state: 'star_box'
+                        }
+                    });
                     break;
                 case 'draft_box':
-                    this.$router.replace('/message_center/inbox?state=draft_box');
+                    this.$router.push({
+                        name: 'inbox',
+                        query: {
+                            state: 'draft_box'
+                        }
+                    });
                     break;
                 case 'send_box':
-                    this.$router.replace('/message_center/inbox?state=send_box');
+                    this.$router.push({
+                        name: 'inbox',
+                        query: {
+                            state: 'send_box'
+                        }
+                    });
                     break;
                 case 'delete_box':
-                    this.$router.replace('/message_center/inbox?state=delete_box');
+                    this.$router.push({
+                        name: 'inbox',
+                        query: {
+                            state: 'delete_box'
+                        }
+                    });
                     break;
                 case 'new_email':
-                    this.$router.replace('/message_center/new_email');
+                    this.$router.push('/message_center/new_email');
                     break;
 
                 case 'date_management':
-                    this.$router.replace('/system/date_management');
+                    this.$router.push('/system/date_management');
                     break;
                 case 'message_management':
-                    this.$router.replace('/system/message_management');
+                    this.$router.push('/system/message_management');
                     break;
-                case 'file_management':
-                    this.$router.replace('/system/file_management');
-                    break;
+                // case 'file_management':
+                //     this.$router.push('/system/file_management');
+                //     break;
                 case 'fixed_storage':
-                    this.$router.replace('/resources_management/storage_base?data=fixed_storage');
+                    this.$router.push({
+                        path: '/resources_management/storage_base',
+                        query: {
+                            data: 'fixed_storage'
+                        }
+                    });
                     break;
                 case 'temporary_storage':
-                    this.$router.replace('/resources_management/storage_base?data=temporary_storage');
-                    break;
-                case 'customize':
-                    this.$router.replace('/resources_management/customize');
+                    this.$router.push({
+                        path: '/resources_management/storage_base',
+                        query: {
+                            data: 'temporary_storage'
+                        }
+                    });
                     break;
                 case 'shared_documents':
-                    this.$router.replace('/resources_management/storage_base?data=shared_documents');
+                    this.$router.push({
+                        path: '/resources_management/storage_base',
+                        query: {
+                            data: 'shared_documents'
+                        }
+                    });
                     break;
+                case 'customize':
+                    this.$router.push('/resources_management/customize');
+                    break;
+
                 case 'internal_interwork':
-                    this.$router.replace('/resources_management/internal_interwork');
+                    this.$router.push('/resources_management/internal_interwork');
                     break;
                 case 'document_retrieval':
-                    this.$router.replace('/resources_management/document_retrieval');
+                    this.$router.push('/resources_management/document_retrieval');
                     break;
                 case 'visual_analysis':
-                    this.$router.replace('/resources_management/visual_analysis');
+                    this.$router.push('/resources_management/visual_analysis');
                     break;
                 case 'console':
-                    this.$router.replace('/console')
+                    this.$router.push('/console')
                     break
             }
         },
         //导航标签
         nav() {
-            let u = window.location.pathname,
-                info_ = window.location.search,
+            let u = window.location.href.split('/#/')[1].split('?')[0],
+                info_ = Object.values(this.$route.query)[0],
                 ua = u.trim().split('/'),
                 s = '',
                 _this = this
-            ua.shift()
             ua.forEach(function (currentVal, index, arr) {
                 s = s + _this[currentVal] + ' / '
 
             })
             if (info_) {
                 switch (info_) {
-                    case '?data=fixed_storage':
+                    case 'fixed_storage':
                         s = s.replace(/undefined/, '固定存储')
                         break
-                    case '?data=temporary_storage':
+                    case 'temporary_storage':
                         s = s.replace(/undefined/, '临时存储')
                         break
-                    case '?data=shared_documents':
+                    case 'shared_documents':
                         s = s.replace(/undefined/, '共享文件')
                         break
-                    case '?state=star_box':
+                    case 'star_box':
                         s = s.replace('收件箱', '标星箱')
                         break
-                    case '?state=draft_box':
+                    case 'draft_box':
                         s = s.replace('收件箱', '草稿箱')
                         break
-                    case '?state=send_box':
+                    case 'send_box':
                         s = s.replace('收件箱', '已发送')
                         break
-                    case '?state=delete_box':
+                    case 'delete_box':
                         s = s.replace('收件箱', '已删除')
                         break
                 }
@@ -479,6 +545,9 @@ export default {
         left_nav_show() {
             return this.nav_.left_nav_show
         },
+        permission() {
+            return sessionStorage.getItem('class')
+        }
 
     },
     watch: {
@@ -534,8 +603,8 @@ export default {
 .nav_link {
     width: 64px;
     height: 100%;
-    /* background-color: #2d5988; */
-    background: #393d49;
+    background-color: #2d5988;
+    /* background: #393d49; */
     transition: width 0.4s;
 }
 .nav_link.show_me {

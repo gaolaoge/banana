@@ -2,7 +2,7 @@
     <div>
         <div class="header">
             <el-button v-on:click="move('已删除')">删除</el-button>
-            <el-button @click="detele_true">彻底删除</el-button>
+            <el-button @click="detele_trueQ">彻底删除</el-button>
             <el-select
                 v-model="value"
                 placeholder="请选择"
@@ -94,8 +94,6 @@
                 </el-tooltip>
             </div>
         </div>
-        <!-- {{ envelope_text }} -->
-        <!-- {{ options_ }} -->
         <article
             class="a"
             v-bind:class="{h: !quill}"
@@ -103,10 +101,8 @@
             <pre
                 v-html="envelope_text.emailDetails"
                 class="pre_"
+                v-show="filder != '草稿箱'"
             >
-                <!-- {{ envelope_text.emailDetails }} -->
-                
-                <!-- {{ t }} -->
             </pre>
         </article>
         <div class="in_">
@@ -171,7 +167,7 @@
                 </div>
             </div>
         </transition>
-        
+
         <div
             class="nav"
             v-bind:class="{nav_: quill}"
@@ -267,7 +263,8 @@ import {
     delete_t,
     sign_already,
     immediate_treatment,
-    pu
+    pu,
+    draft_send
 } from '@/api/api_base'
 
 export default {
@@ -314,23 +311,27 @@ export default {
         all_data: {                       //全部数据
             type: Array,
             required: true
+        },
+        filder: {
+            type: String,                   //当前文件夹
+            required: true
         }
     },
     watch: {
         content: function (n) {
             this.content_inp = n.replace(/<\/?\w\W*>/g, '')
         },
-        envelope_text: function(n){
+        envelope_text: function (n) {
             this.show_index = n.index
         },
         envelope_text: {
             immediate: true,
-            handler: function(n){
+            handler: function (n) {
                 this.value = n.examine
                 this.value_ = n.dirName
             }
         }
-        
+
     },
     computed: {
         editor() {
@@ -345,18 +346,18 @@ export default {
     },
     methods: {
         //添加备注
-        remarks_(){
+        remarks_() {
             // console.log(this.show_index - 1)
             // console.log(this.previous_)
             // console.log(this.next_)
             // console.log(this.previous_)
         },
         //添加额度
-        add_more(){
+        add_more() {
             let self_ = this
-            pu({'account': this.change_limit.account,'oldValue':this.change_limit.KBTotal,'value': this.space,'unit': this.MGT})
+            pu({ 'account': this.change_limit.account, 'oldValue': this.change_limit.KBTotal, 'value': this.space, 'unit': this.MGT })
                 .then(data => {
-                    if(data.data == 1){
+                    if (data.data == 1) {
                         self_.$message({
                             message: '操作成功',
                             type: 'success'
@@ -385,7 +386,6 @@ export default {
             let t = [],
                 self_ = this
             t.push(self_.envelope_text.id)
-            console.log({ 'data': t, 'action': v })
             sign_already({ 'data': t, 'action': v })
                 .then(data => {
                     if (data.data == 1) {
@@ -403,7 +403,7 @@ export default {
                 })
         },
         //彻底删除
-        detele_true() {
+        detele_trueQ() {
             let self_ = this,
                 arr = []
             this.$confirm('此操作不可回退, 是否继续?', '提示', {
@@ -452,21 +452,42 @@ export default {
                 return false
             }
             let self_ = this
-            message_response({ 'data': this.content, 'id': this.envelope_text.id })
-                .then(data => {
-                    if (data.data == 1) {
-                        self_.fullSreen = false
-                        self_.content = ''
-                        self_.content_inp = ''
-                        self_.$message({
-                            message: '回复成功',
-                            type: 'success'
-                        })
-                    }
-                })
-                .catch(err => {
+            if (this.filder == '草稿箱') {
+                draft_send({ 'data': this.content, 'id': this.envelope_text.id })
+                    .then(data => {
+                        if (data.data == 1) {
+                            self_.fullSreen = false
+                            self_.content = ''
+                            self_.content_inp = ''
+                            self_.$message({
+                                message: '回复成功',
+                                type: 'success'
+                            })
+                        }
+                        self_.$emit('shutdown')
+                    })
+                    .catch(err => {
 
-                })
+                    })
+            } else {
+                message_response({ 'data': this.content, 'id': this.envelope_text.id })
+                    .then(data => {
+                        if (data.data == 1) {
+                            self_.fullSreen = false
+                            self_.content = ''
+                            self_.content_inp = ''
+                            self_.$message({
+                                message: '回复成功',
+                                type: 'success'
+                            })
+                            self_.$emit('shutdown')
+                        }
+                    })
+                    .catch(err => {
+
+                    })
+            }
+
         },
         //移动至
         move(destination) {
@@ -501,6 +522,9 @@ export default {
                     })
             }
         },
+    },
+    mounted() {
+        if (this.filder == '草稿箱') this.content = this.envelope_text.emailDetails
     }
 }
 </script>

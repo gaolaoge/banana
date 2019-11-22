@@ -61,9 +61,15 @@
                         >
                         </el-input>
                     </el-form-item>
+                    <el-form-item label="地址">
+                        <el-input
+                            v-model="form.firmAddress"
+                            :readonly="detail_e.type == 'check'"
+                        >
+                        </el-input>
+                    </el-form-item>
                 </el-form>
             </article>
-            {{ form2.nul }}
             <article class="f">
                 <header>
                     <h5 class="title">
@@ -73,12 +79,12 @@
                 <el-form
                     ref="form"
                     :model="form2"
-                    label-width="100px"
+                    label-width="146px"
                 >
                     <el-form-item label="部门">
                         <el-select
                             v-model="form2.adminDepartment"
-                            :disabled="detail_e.type == 'check'"
+                            disabled
                         >
                             <el-option
                                 v-for="item in part"
@@ -94,6 +100,7 @@
                             v-model="form2.password"
                             type="password"
                             show-password
+                            readonly
                         >
                         </el-input>
                     </el-form-item>
@@ -124,7 +131,7 @@
                             >{{ item_.v }}</el-checkbox>
                         </el-checkbox-group>
                     </el-form-item>
-                    <el-form-item label="开通容量大小">
+                    <el-form-item label="开通容量大小（TB）">
                         <div style="width: 480px;
                                     padding-left: 10px;">
                             <div class="block">
@@ -132,6 +139,7 @@
                                     v-model="form2.totalSpace"
                                     :marks="form2.marks"
                                     :max="200"
+                                    :min="form2.usedSpace"
                                     show-input
                                     :disabled="detail_e.type == 'check'"
                                 >
@@ -177,6 +185,7 @@ export default {
                 password: '',
                 adminName: '',
                 nul: [],
+                ed: 0,
                 account: '',
                 totalSpace: 0,
                 // memory: 1,
@@ -208,7 +217,8 @@ export default {
                     name: 'power'
                 },
             ],
-            part: []
+            part: [],
+            detail_e: {}
         }
     },
     methods: {
@@ -216,9 +226,9 @@ export default {
         p(){
             let t = {}
             Object.assign(t,this.form,this.form2)
-            console.log(t)
             detail_P({'data': t})
                 .then(data => {
+                    this.$router.back(-1)
                     this.$message({
                         message: '修改成功',
                         type: 'success',
@@ -226,12 +236,8 @@ export default {
                     })
                 })
                 .catch(err => {
-                    console.log(err)
                 })
         },
-    },
-    computed: {
-        ...mapState(['detail_e'])
     },
     created() {
         Object.keys(JSON.parse(sessionStorage.employees)).forEach(curr_ => {
@@ -240,12 +246,14 @@ export default {
                 label: curr_
             })
         })
+        this.detail_e = this.$route.query
         let s = `name=${this.detail_e.name}&id=${this.detail_e.id}&firmKEY=${this.detail_e.firmKEY}`
         detail_G(s)
             .then(data => {
                 this.form = data.data[0]
                 this.form2 = data.data[1]
                 this.form2.totalSpace = Number(this.form2.totalSpace)
+                this.form2.usedSpace = Number(this.form2.usedSpace)
             })
     }
 }
@@ -275,7 +283,6 @@ export default {
             }
         }
         .c {
-            // display: block;
             float: right;
             margin-right: 42px;
         }

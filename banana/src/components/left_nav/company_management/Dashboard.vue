@@ -55,7 +55,7 @@ export default {
                     radius: '100%'
                 }
             },
-            
+
         }
         return {
             chartData: {
@@ -98,7 +98,7 @@ export default {
         .f {
             margin-left: 50%;
             transform: translateX(-50%);
-            width: 1000px;
+            width: 90%;
             display: flex;
             justify-content: space-around;
             padding: 60px 0px;
@@ -137,6 +137,13 @@ export default {
             float: right;
             margin-top: 150px;
             margin-right: 220px;
+        }
+    }
+}
+@media screen and (max-width: 1300px) {
+    .company_management {
+        .wrapper {
+            width: 99%;
         }
     }
 }

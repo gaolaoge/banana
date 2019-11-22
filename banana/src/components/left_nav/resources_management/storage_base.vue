@@ -28,6 +28,7 @@
                         >
                         </el-option>
                     </el-select>
+                    <hr class="pp">
                     <span>文件大小：</span>
                     <el-select
                         v-model="file_volumn"
@@ -44,15 +45,7 @@
                         </el-option>
                     </el-select>
                 </div>
-                <div class="line_ f">
-                    <el-button
-                        @click="x"
-                        v-if="move_btn"
-                    >移动</el-button>
-                    <el-button @click="toggleSelection">反选</el-button>
-                    <el-button>删除</el-button>
-                </div>
-                <div class="line_">
+                <div class="liner_">
                     <span>上传日期：</span>
                     <el-radio-group
                         v-model="radio"
@@ -75,11 +68,14 @@
                     >
                     </el-date-picker>
                 </div>
-
-                <!-- <div class="line_">
-                    
-                </div> -->
-                <!-- {{ check_val }} -->
+                <div class="line_ f">
+                    <el-button
+                        @click="x"
+                        v-if="move_btn"
+                    >移动</el-button>
+                    <el-button @click="toggleSelection">反选</el-button>
+                    <el-button>删除</el-button>
+                </div>
             </div>
             <div class="tab">
                 <el-table
@@ -109,7 +105,7 @@
                     </el-table-column>
                     <el-table-column
                         prop="fileColumn"
-                        label="数据大小"
+                        label="数据大小(MB)"
                         align="center"
                         width="140"
                         sortable
@@ -119,6 +115,7 @@
                         prop="fileDate"
                         label="上传时间"
                         align="center"
+                        width="160"
                         sortable
                     >
                     </el-table-column>
@@ -130,11 +127,12 @@
                     >
                         <template slot-scope="scope">
                             <el-button
-                                @click="handleClick(scope.row)"
+                                @click="preview(scope.row)"
                                 type="text"
                                 size="small"
                             >预览</el-button>
                             <el-button
+                                @click="download_(scope.row)"
                                 type="text"
                                 size="small"
                             >下载</el-button>
@@ -145,6 +143,7 @@
                             <el-button
                                 type="text"
                                 size="small"
+                                @click="shareFn(scope.row)"
                             >分享至</el-button>
                         </template>
                     </el-table-column>
@@ -188,7 +187,68 @@
                     </el-option>
                 </el-option-group>
             </el-select>
-            <el-button style="margin-left: 40px;" @click="move_folder">确认移动</el-button>
+            <el-button
+                style="margin-left: 40px;"
+                @click="move_folder"
+            >确认移动</el-button>
+        </el-dialog>
+        <!-- 预览弹出框 -->
+        <el-dialog
+            title="文件预览"
+            :visible.sync="dialogVisible"
+            width="90%"
+            :before-close="pdf_src = null"
+        >
+            <iframe
+                :src='pdf_src'
+                width='100%'
+                height='600'
+                frameborder='1'
+                v-if="pdf"
+            >
+            </iframe>
+        </el-dialog>
+        <el-dialog
+            title="文件分享"
+            :visible.sync="dialogShare"
+            width="700px"
+            :before-close="shareClose"
+        >
+            <span>
+                部门：
+            </span>
+            <el-select
+                v-model="depart_"
+                placeholder="请选择部门"
+                class="p"
+            >
+                <el-option
+                    v-for="item in de_"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                >
+                </el-option>
+            </el-select>
+            <span>
+                用户：
+            </span>
+            <el-select
+                v-model="user_"
+                placeholder="请选择"
+            >
+                <el-option
+                    v-for="item in options_"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                >
+                </el-option>
+            </el-select>
+            <el-button
+                type="primary"
+                @click="selectUser"
+            >确定</el-button>
         </el-dialog>
     </div>
 </template>
@@ -197,7 +257,10 @@
 
 import {
     storage_base,
-    move_data
+    move_data,
+    share_file,
+    file_pre,
+    enterprise_download
 } from '@/api/api_base'
 
 export default {
@@ -311,9 +374,149 @@ export default {
             tableData: [],
             TL: '',
             timeInterval: '',
+            shareData: {
+                fileName: '',
+                filePath: '',
+                userName: ''
+            },
+            dialogShare: false,
+            depart_: '',
+            options_: [],
+            de_: [],
+            user_: '',
+            pdf_src: '',
+            pdf_srcT: '',
+            dialogVisible: false,
         }
     },
     methods: {
+        //下载
+        download_() {
+            this.loading = true
+            let p = arguments[0],
+                name_ = p.fileName,
+                path_ = p.filePath,
+                self_ = this,
+                http_ = null
+            if (window.XMLHttpRequest) {
+                http_ = new XMLHttpRequest()
+            } else {
+                http_ = new ActiveXObject('Microsoft.XMLHttp')
+            }
+            switch (name_.split('.')[1]) {
+                case 'jpg':
+                case 'png':
+                case 'gif':
+                case 'xlsx':
+                case 'docx':
+                case 'ppt':
+                case 'pdf':
+                case 'mp3':
+                case 'mp4':
+                    http_.open('GET', `/company/enterpriseFile_download_address.do?name=${name_}&path=${path_}`)
+                    break
+                case 'txt':
+                case 'xml':
+                case 'json':
+                case 'java':
+                    http_.open('GET', `/company/enterpriseFile_download_IO.do?name=${name_}&path=${path_}`)
+                    break
+            }
+            http_.setRequestHeader('token', sessionStorage.getItem('logIn'))
+            http_.send()
+            http_.onreadystatechange = function () {
+                if (http_.readyState == 4) {
+                    if (http_.status == 200) {
+                        switch (name_.split('.')[1]) {
+                            case 'jpg':
+                            case 'png':
+                            case 'gif':
+                            case 'xlsx':
+                            case 'docx':
+                            case 'ppt':
+                            case 'pdf':
+                            case 'mp3':
+                            case 'mp4':
+                                const a = document.createElement('a')
+                                a.style.display = 'none'
+                                a.download = name_
+                                a.href = JSON.parse(http_.responseText)
+                                a.target = '_blank'
+                                a.rel = 'noopener noreferrer'
+                                document.getElementsByClassName('wrapper')[0].append(a)
+                                a.click()
+                                self_.loading = false
+                                break
+                            case 'txt':
+                            case 'xml':
+                            case 'json':
+                            case 'java':
+                                var blob = new Blob([http_.responseText], { 'type': 'application/octet-stream;charset=UTF-8' }),
+                                    fileName = p.fileName
+                                downFile(blob, fileName)
+                                break
+                        }
+                    }
+                }
+            }
+            function downFile(blob, fileName) {
+                if (window.navigator.msSaveOrOpenBlob) {
+                    navigator.msSaveBlob(blob, fileName);
+                } else {
+                    var link = document.createElement('a');
+                    link.href = window.URL.createObjectURL(blob);
+                    link.download = fileName;
+                    link.click();
+                    window.URL.revokeObjectURL(link.href);
+                }
+                self_.loading = false
+            }
+
+        },
+        // 文件分享
+        selectUser() {
+            this.shareData.userName = this.user_
+            share_file({ 'data': this.shareData })
+                .then(data => {
+                    this.$message({
+                        message: '分享成功',
+                        type: 'success'
+                    })
+                    this.shareClose()
+                })
+        },
+        // 文件分享按钮点击
+        shareFn(r) {
+            this.shareData.fileName = r.fileName
+            this.shareData.filePath = r.filePath
+            this.dialogShare = true
+        },
+        // 关闭分享窗口
+        shareClose() {
+            this.shareData.fileName = ''
+            this.shareData.filePath = ''
+            this.shareData.userName = ''
+            this.user_ = ''
+            this.depart_ = ''
+            this.dialogShare = false
+        },
+        //预览
+        preview() {
+            let p = arguments[0],
+                type_ = p.fileType,       //文件类型
+                name_ = p.fileName,       //文件名
+                path_ = p.filePath,       //文件地址
+                self_ = this
+            file_pre({ 'name': name_, 'path': path_ })
+                .then(data => {
+                    self_.pdf_src = data.data
+                    self_.dialogVisible = true
+                    self_.pdf = true
+                })
+                .catch(err => {
+
+                })
+        },
         //反选
         toggleSelection() {
             var self_ = this
@@ -387,16 +590,16 @@ export default {
                     })
                     this.folder_class[1].options = []
                     data.data.userCFolder.forEach(current_ => {
-                            this.folder_class[1].options.push({
-                                'value': current_.customFolder,
-                                'label': current_.customFolder
-                            })
+                        this.folder_class[1].options.push({
+                            'value': current_.customFolder,
+                            'label': current_.customFolder
+                        })
                     })
                 })
         },
         //移动至其它文件夹
-        move_folder(){
-            if(this.move_to == ''){
+        move_folder() {
+            if (this.move_to == '') {
                 this.$message.error('未选中文件夹')
                 return false
             }
@@ -405,20 +608,20 @@ export default {
                 'filePath': [],
                 'customFolder': ''
             }
-            if(this.move_to == 'temporary_storage'){
+            if (this.move_to == 'temporary_storage') {
                 t.TL = 'temp'
-            }else if(this.move_to == 'fixed_storage'){
+            } else if (this.move_to == 'fixed_storage') {
                 t.TL = 'fix'
-            }else{
+            } else {
                 t.TL = 'custom',
-                t.customFolder = this.move_to
+                    t.customFolder = this.move_to
             }
             this.check_val.forEach(current_ => {
                 t.filePath.push(current_.filePath)
             })
-            move_data({'data': t})
+            move_data({ 'data': t })
                 .then(data => {
-                    if(data.data == 1){
+                    if (data.data == 1) {
                         this.$message({
                             message: '移动成功',
                             type: 'success'
@@ -430,11 +633,22 @@ export default {
         }
     },
     watch: {
+        depart_(newVal, oldVal) {
+            this.user_ = ''
+            this.options_ = []
+            let self_ = this
+            self_.all_[newVal].forEach(currentVal_ => {
+                self_.options_.push({
+                    label: currentVal_.userName,
+                    value: currentVal_.account,
+                })
+            })
+        },
         $route: {
             handler: function () {
-                let u = window.location.search
+                let u = this.$route.query.data
                 switch (u) {
-                    case '?data=fixed_storage':
+                    case 'fixed_storage':
                         this.move_btn = true
                         this.folder_class[0].options = [{
                             value: 'temporary_storage',
@@ -442,7 +656,7 @@ export default {
                         }]
                         this.TL = 'fix'
                         break
-                    case '?data=temporary_storage':
+                    case 'temporary_storage':
                         this.move_btn = true
                         this.folder_class[0].options = [{
                             value: 'fixed_storage',
@@ -450,37 +664,26 @@ export default {
                         }]
                         this.TL = 'temp'
                         break
-                    case '?data=shared_documents':
+                    case 'shared_documents':
                         this.move_btn = false
                         this.TL = 'public'
                 }
                 this.get_data()
             },
-            deep: true
+            deep: true,
+            immediate: true
         }
     },
     created() {
-        switch (window.location.search) {
-            case '?data=fixed_storage':
-                this.move_btn = true
-                this.folder_class[0].options = [{
-                    value: 'temporary_storage',
-                    label: '临时存储'
-                }]
-                this.TL = 'fix'
-                break
-            case '?data=temporary_storage':
-                this.move_btn = true
-                this.folder_class[0].options = [{
-                    value: 'fixed_storage',
-                    label: '固定存储'
-                }]
-                this.TL = 'temp'
-                break
-            case '?data=shared_documents':
-                this.move_btn = false
-                this.TL = 'public'
-        }
+        this.all_ = JSON.parse(sessionStorage.getItem('employees'))
+        let t = JSON.parse(sessionStorage.getItem('employees')),
+            self_ = this
+        Object.keys(t).forEach(current_ => {
+            self_.de_.push({
+                value: current_,
+                label: current_
+            })
+        })
         this.get_data()
     }
 }
@@ -491,6 +694,9 @@ export default {
     .wrapper {
         width: 1300px;
         margin: 0px auto;
+        .pp {
+            display: none;
+        }
         .search_ {
             margin-top: 22px;
             .line_ {
@@ -499,12 +705,15 @@ export default {
                     width: 300px;
                 }
                 .s {
-                    // display: inline-block;
                     margin-right: 22px;
                 }
             }
+            .liner_ {
+                padding: 8px 0px;
+            }
             .f {
                 float: right;
+                margin-top: -56px;
             }
         }
         .tab {
@@ -516,6 +725,24 @@ export default {
         }
         .radio_class {
             margin-right: 22px;
+        }
+    }
+}
+@media screen and (max-width: 1400px) {
+    .storage_base {
+        .wrapper {
+            width: 99%;
+            .pp {
+                display: block;
+                opacity: 0;
+            }
+            .liner_ {
+                display: inline-block;
+            }
+            .f {
+                float: none !important;
+                margin-top: 0px !important;
+            }
         }
     }
 }

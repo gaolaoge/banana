@@ -20,6 +20,7 @@
                         :key="index"
                         @click="ahow_c(li_.key_word,li_.word)"
                         class="li_"
+                        :title="li_.word"
                     >
                         {{ li_.word }}
                     </li>
@@ -111,7 +112,7 @@ export default {
                 cursor: pointer;
                 line-height: 42px;
                 width: 340px;
-                white-space: npwrap;
+                white-space: nowrap;
                 overflow: hidden;
                 text-overflow: ellipsis;
             }
@@ -177,8 +178,6 @@ export default {
 }
 .tagcloud {
     position: absolute;
-    // right: 100px;
-    // margin-top: -200px;
     width: 500px;
     height: 350px;
 }
@@ -203,5 +202,12 @@ export default {
     -ms-filter: "progid:DXImageTransform.Microsoft.Shadow(Strength=4,Direction=135, Color='#000000')"; /*兼容ie7/8*/
     filter: progid:DXImageTransform.Microsoft.Shadow(color='#969696', Direction=125, Strength=9);
     /*strength是阴影大小，direction是阴影方位，单位为度，可以为负数，color是阴影颜色 （尽量使用数字）使用IE滤镜实现盒子阴影的盒子必须是行元素或以行元素显示（block或inline-block;）*/
+}
+@media screen and (max-width: 1400px) {
+    .popular {
+        .wrapper {
+            width: 94%;
+        }
+    }
 }
 </style>

@@ -76,10 +76,13 @@
                         <div class="t_">
                             <p>平台公告</p>
                         </div>
-                        <span class="more_">
+                        <router-link
+                            class="more_"
+                            to="/platform_management/announcement_management"
+                        >
                             查看更多
                             <i class="layui-icon layui-icon-next"></i>
-                        </span>
+                        </router-link>
                         <article class="announcement">
                             <header>
                                 <p
@@ -87,13 +90,10 @@
                                     ref="article_title"
                                 ></p>
                             </header>
-                            <!-- <div> -->
                             <p
                                 class="main_"
                                 ref="article_main"
                             ></p>
-                            <!-- </div> -->
-
                         </article>
                     </li>
                     <li class="window_">
@@ -150,6 +150,9 @@ export default {
                 top: 40,
                 left: 10
             },
+            grid: {
+                top: 10
+            }
         }
         return {
             select_: '固定存储',
@@ -210,11 +213,11 @@ export default {
     },
     methods: {
         g() {
-            if(this.select_ == '固定存储'){
+            if (this.select_ == '固定存储') {
                 this.getData('fix')
-            }else if(this.select_ == '临时存储'){
+            } else if (this.select_ == '临时存储') {
                 this.getData('temp')
-            }else {
+            } else {
                 this.getData('custom')
             }
 
@@ -224,7 +227,7 @@ export default {
             console_base({ 'data': { 'TL': t } })
                 .then(data => {
                     self_.$refs.article_title.innerText = data.data.stickAffiche.headline
-                    self_.$refs.article_main.innerText = data.data.stickAffiche.body
+                    self_.$refs.article_main.innerHTML = data.data.stickAffiche.body
                     self_.data_ = data.data.HotWord
                     self_.chartData.rows = []
                     data.data.thisMapSettle.forEach(current_ => {
@@ -264,7 +267,16 @@ export default {
     },
     created() {
         this.getData('fix')
-
+        switch(sessionStorage.getItem('class')){
+            case 'S':
+            case 'A':
+                this.card_[0]['unit_'] = 'TB'
+                break
+            case 'B':
+            case 'C':
+                this.card_[0]['unit_'] = 'GB'
+                break
+        }
     }
 }
 </script>
@@ -278,7 +290,7 @@ export default {
         justify-content: space-around;
         margin: 12px auto;
         .card_li {
-            width: 280px;
+            width: 22%;
             height: 126px;
             border-radius: 3px;
             .title {
@@ -357,7 +369,8 @@ export default {
                     text-indent: 2em;
                 }
                 .main_ {
-                    // height: 196px;
+                    height: 190px;
+                    width: 100%;
                     font-size: 14px;
                     color: #424242;
                     line-height: 2em;
@@ -366,6 +379,24 @@ export default {
                     -webkit-box-orient: vertical;
                     -webkit-line-clamp: 7;
                     overflow: hidden;
+                    overflow-y: auto;
+                }
+                .main_::-webkit-scrollbar {
+                    /*滚动条整体样式*/
+                    width: 8px; /*高宽分别对应横竖滚动条的尺寸*/
+                    height: 8px;
+                }
+                .main_::-webkit-scrollbar-thumb {
+                    /*滚动条里面小方块*/
+                    border-radius: 10px;
+                    -webkit-box-shadow: inset 0 0 5px rgba(102, 89, 89, 0.2);
+                    background: #9e9797;
+                }
+                .main_::-webkit-scrollbar-track {
+                    /*滚动条里面轨道*/
+                    -webkit-box-shadow: inset 0 0 5px rgba(138, 129, 129, 0.2);
+                    border-radius: 10px;
+                    background: rgb(226, 221, 221);
                 }
             }
             .li_:nth-of-type(1) {
@@ -421,6 +452,20 @@ export default {
         top: 32px;
         right: 12px;
         z-index: 2;
+    }
+}
+@media screen and (max-width: 1480px) {
+    .wrapper {
+        width: 99%;
+    }
+}
+@media screen and (max-width: 1230px) {
+    .wrapper {
+        .console_ {
+            .window_ {
+                width: 98%;
+            }
+        }
     }
 }
 </style>

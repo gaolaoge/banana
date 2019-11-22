@@ -1,5 +1,8 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import { Message } from 'element-ui'
+import axios from 'axios'
+
 import login_page from '@/components/login_page'
 import main_module from '@/components/main_module'
 import storage_management from '@/components/left_nav/platform_management/storage_management'                   //数据存储管理
@@ -20,7 +23,7 @@ import company_add from '@/components/left_nav/super_admin/company_add'
 import detail from '@/components/left_nav/super_admin/detail_'
 import inbox from '@/components/left_nav/email/inbox'
 import date_management from '@/components/left_nav/system/date_management'
-import file_management from '@/components/left_nav/system/file_management'
+// import file_management from '@/components/left_nav/system/file_management'
 import message_management from '@/components/left_nav/system/message_management'
 import popular from '@/components/left_nav/log_retrieval/popular'
 import record from '@/components/left_nav/log_retrieval/record'
@@ -32,161 +35,286 @@ import visual_analysis from '@/components/left_nav/resources_management/visual_a
 import new_email from '@/components/left_nav/email/new_email'
 import console from '@/components/left_nav/console'
 import find_layim from '@/assets/find'
+import fixedList from '@/components/left_nav/platform_management/fixedList'
+import fixedSee from '@/components/left_nav/platform_management/fixedSee'
 
 Vue.use(Router)
 
-export default new Router({
+let router_ = new Router({
   routes: [
     {                                       //登录页
       path: '/',
       name: 'login_page',
       component: login_page
     },
-    // {
-    //   path: '/login_',
-    //   name: 'login_page2',
-    //   component: login_page2
-    // },
-    // {
-    //   path: '/forget_password',
-    //   name: 'forget_password',
-    //   component: forget_password
-    // },
     {
-      path: '/main_module',                 //控制台
+      path: '/main_module',                 
       name: 'main_module',
       component: main_module,
-      redirect: '/platform_management/storage_management',
+      redirect: '/console',
       children: [
         {
-          path: '/console',
-          component: console
+          path: '/console',                                      //控制台
+          component: console,
+          name: 'console',
+          meta: {
+            permission: ['S','A','B','C']
+          }
         },
         {
           path: '/resources_management/storage_base',           //资源管理 - 固定存储/临时存储/共享文件
-          component: storage_base
+          component: storage_base,
+          meta: {
+            permission: ['B','C']
+          }
         },
         {
           path: '/resources_management/customize',             //资源管理 - 自定义
-          component: customize
+          component: customize,
+          meta: {
+            permission: ['B','C']
+          }
         },
         {
           path: '/resources_management/internal_interwork',    //资源管理 - 内部互通
-          component: internal_interwork
+          component: internal_interwork,
+          meta: {
+            permission: ['B','C']
+          }
         },
         {
           path: '/resources_management/document_retrieval',    //资源管理 - 文件检索
-          component: document_retrieval
+          component: document_retrieval,
+          meta: {
+            permission: ['B','C']
+          }
         },
         {
           path: '/resources_management/visual_analysis',       //资源管理 - 可视化分析
-          component: visual_analysis
+          component: visual_analysis,
+          meta: {
+            permission: ['A']
+          }
         },
         {
-          path: '/log_retrieval/popular',                       //数据存储管理
-          component: popular
+          path: '/log_retrieval/popular',                            //搜索日志 - 热门搜索
+          component: popular,
+          meta: {
+            permission: ['A','B','C']
+          }
         },
         {
-          path: '/log_retrieval/record',                        //数据存储管理
-          component: record
+          path: '/log_retrieval/record',                             //搜索日志 - 搜索记录
+          component: record,
+          meta: {
+            permission: ['A','B','C']
+          }
         },
         {
-          path: '/platform_management/storage_management',      //数据存储管理
-          component: storage_management
+          path: '/platform_management/storage_management',           //平台管理 - 数据存储管理
+          component: storage_management,
+          meta: {
+            permission: ['A']
+          }
         },
         {
-          path: '/platform_management/download_management',     //下载管理
-          component: download_management
+          path: '/platform_management/fixedList',                    //平台管理 - 文件列表
+          component: fixedList,
+          meta: {
+            permission: ['A']
+          }
         },
         {
-          path: '/platform_management/announcement_management',      //公告管理
-          component: announcement_management
+          path: '/platform_management/fixedSee',                     //平台管理 - 文件查看
+          name: 'fixedSee',
+          component: fixedSee,
+          meta: {
+            permission: ['A']
+          }
         },
         {
-          path: '/company_management/Dashboard',                //企业管理
-          component: Dashboard
+          path: '/platform_management/download_management',          //平台管理 - 数据下载管理
+          component: download_management,
+          meta: {
+            permission: ['A']
+          }
         },
         {
-          path: '/company_management/address_book',             //通讯录
-          component: address_book
+          path: '/platform_management/announcement_management',      //平台管理 - 公告管理
+          component: announcement_management,
+          meta: {
+            permission: ['A']
+          }
         },
         {
-          path: '/company_management/data_analysis',            //数据分析
-          component: data_analysis
+          path: '/company_management/Dashboard',                    //企业管理 - 企业仪表盘
+          component: Dashboard,
+          meta: {
+            permission: ['A']
+          }
         },
         {
-          path: '/company_management/enterprise',               //数据分析
-          component: enterprise
+          path: '/company_management/address_book',                //企业管理 - 企业通讯录
+          component: address_book,
+          meta: {
+            permission: ['A','B','C']
+          }
         },
         {
-          path: '/company_management/statistics',              //数据分析
-          component: statistics
+          path: '/company_management/data_analysis',               //企业管理 - 数据分析
+          component: data_analysis,
+          meta: {
+            permission: ['A']
+          }
         },
         {
-          path: '/personal_center',           //修改个人信息
-          component: personal_center
+          path: '/company_management/enterprise',                 //企业管理 - 企业文件
+          component: enterprise,
+          meta: {
+            permission: ['A']
+          }
         },
         {
-          path: '/user_management/user_management_info',       //用户信息管理
-          component: user_management_info
+          path: '/company_management/statistics',                 //企业管理 - 部门统计
+          component: statistics,
+          meta: {
+            permission: ['A']
+          }
         },
         {
-          path: '/user_management/user_management_self',       //个人中心
-          component: user_management_self
+          path: '/personal_center',                               //用户 - 修改个人信息
+          component: personal_center,
+          meta: {
+            permission: ['S','A','B','C']
+          }
         },
         {
-          path: '/user_management/batch_operation',            //批量操作
-          component: batch_operation
+          path: '/user_management/user_management_info',          //用户管理 - 用户信息管理
+          component: user_management_info,
+          meta: {
+            permission: ['A']
+          }
         },
         {
-          path: '/user_management/memory_management',          //内存管理
-          component: memory_management
+          path: '/user_management/user_management_self',          //用户管理 - 个人中心
+          component: user_management_self,
+          meta: {
+            permission: ['S','A','B','C']
+          }
         },
         {
-          path: '/super_admin/company_list',                   //企业列表
-          component: company_list
+          path: '/user_management/batch_operation',               //用户管理 - 批量操作
+          component: batch_operation,
+          meta: {
+            permission: ['A']
+          }
         },
         {
-          path: '/super_admin/company_add',                    //企业新企业
-          component: company_add
+          path: '/user_management/memory_management',             //用户管理 - 内存管理
+          component: memory_management,
+          meta: {
+            permission: ['B','C']
+          }
         },
         {
-          path: '/super_admin/detail_',                        //查看或编辑
-          component: detail
+          path: '/super_admin/company_list',                      //超级管理 - 企业列表
+          component: company_list,
+          meta: {
+            permission: ['S']
+          }
         },
         {
-          path: '/message_center/inbox',                       //收件箱
-          component: inbox
+          path: '/super_admin/company_add',                       //超级管理 - 企业新企业
+          component: company_add,
+          meta: {
+            permission: ['S']
+          }
         },
         {
-          path: '/message_center/new_email',                       //写邮件
-          component: new_email
+          path: '/super_admin/detail_',                           //超级管理 - 查看或编辑
+          component: detail,
+          meta: {
+            permission: ['S']
+          }
         },
         {
-          path: '/system/date_management',                       //存储时间管理
-          component: date_management
+          path: '/message_center/inbox',                          //消息中心 - 收件箱
+          name: 'inbox',
+          component: inbox,
+          meta: {
+            permission: ['A','B','C']
+          }
         },
         {
-          path: '/system/file_management',                       //文件容量管理
-          component: file_management
+          path: '/message_center/new_email',                      //消息中心 - 写邮件
+          component: new_email,
+          meta: {
+            permission: ['A','B','C']
+          }
         },
         {
-          path: '/system/message_management',                    //消息清理管理
-          component: message_management
+          path: '/system/date_management',                       //系统管理 - 文件管理
+          component: date_management,
+          meta: {
+            permission: ['A']
+          }
+        },
+        // {
+        //   path: '/system/file_management',                       //系统管理 - 文件容量管理
+        //   component: file_management,
+        //   meta: {
+        //     permission: ['A']
+        //   }
+        // },
+        {
+          path: '/system/message_management',                    //系统管理 - 消息清理管理
+          component: message_management,
+          meta: {
+            permission: ['A']
+          }
+        },
+        {
+          path: '/404',
+          component: () => import('@/404'),
+          meta: {
+            permission: ['S','A','B','C']
+          }
         },
       ]
     },
-    // {
-    //   path: '/main_module',
-    //   name: 'main_module',
-    //   component: main_module
-    // },
-    { 
+    {
       path: '/find',
       name: 'find_layim',
-      component: find_layim 
+      component: find_layim,
+      meta: {
+        permission: ['S','A','B','C']
+      }
     },
-    { path: '*', redirect: '/main_module'}
+    { path: '*', redirect: '/main_module' }
   ],
-  mode: 'history'
+  // mode: 'history'
 })
+router_.beforeEach((to, from, next) => {
+  if (to.path == '/') {
+    next()
+  } else {
+    // 验证登录
+    if (!sessionStorage.getItem('logIn')) {
+      Message.error('尚未登录')
+      next({ path: '/' })
+    } else {
+      // 验证权限
+      let t = [ ...to.meta.permission].indexOf(sessionStorage.getItem('class'))
+      // let t = 0
+      if (t != -1) {
+        axios.defaults.headers.common['token'] = sessionStorage.getItem('logIn')
+        next()
+      }else{
+        next({path: '/404'})
+      }
+
+    }
+  }
+})
+
+export default router_

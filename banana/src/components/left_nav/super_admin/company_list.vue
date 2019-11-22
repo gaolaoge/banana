@@ -97,6 +97,7 @@
                     fixed="right"
                     label="操作"
                     align="center"
+                    width="220"
                 >
                     <template slot-scope="scope">
                         <el-button
@@ -154,52 +155,79 @@ export default {
     },
     methods: {
         //每页显示多少条数据
-        handleSizeChange(val,t_) {
-            if(t_ == null){
+        handleSizeChange(val, t_) {
+            if (t_ == null) {
                 t_ = this
             }
             search_(`name=${t_.search_input}&page_num=${t_.list_type.page_num}&show_num=${val}`)
-            .then(data => {
-                t_.tableData = data.data[0]
-                t_.length_ = data.data[1]
-            })
+                .then(data => {
+                    t_.tableData = data.data[0]
+                    t_.length_ = data.data[1]
+                })
         },
         //翻页
         handleCurrentChange(val) {
             search_(`name=${this.search_input}&page_num=${val}&show_num=${this.list_type.show_num}`)
-            .then(data => {
-                this.tableData = data.data[0]
-                this.length_ = data.data[1]
-            })
+                .then(data => {
+                    this.tableData = data.data[0]
+                    this.length_ = data.data[1]
+                })
         },
         //查看
         check(z) {
-            this.$store.commit('detail_e',[z.enterpriseName,z.id,z.firmKEY,'check'])
-            this.$router.push('/super_admin/detail_')
+            this.$router.push({
+                path: '/super_admin/detail_',
+                query: {
+                    name: z.enterpriseName,
+                    id: z.id,
+                    firmKEY: z.firmKEY,
+                    type: 'check'
+                }
+            })
         },
         //编辑
         edit_(z) {
-            this.$store.commit('detail_e',[z.enterpriseName,z.id,z.firmKEY,'edit'])
-            this.$router.push('/super_admin/detail_')
+            this.$router.push({
+                path: '/super_admin/detail_',
+                query: {
+                    name: z.enterpriseName,
+                    id: z.id,
+                    firmKEY: z.firmKEY,
+                    type: 'edit'
+                }
+            })
         },
         //删除
-        delete_(i,z) {
-            de_({'data': z.firmKEY})
-                .then(data => {
-                    // console.log(data.data)
-                    if(data.data == 1){
-                        this.$message({
-                            message: '删除成功',
-                            type: 'success',
-                            center: true
+        delete_(i, z) {
+            this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            })
+                .then(() => {
+                    de_({ 'data': z.firmKEY })
+                        .then(data => {
+                            if (data.data == 1) {
+                                this.$message({
+                                    message: '删除成功',
+                                    type: 'success',
+                                    center: true
+                                })
+                                let self_ = this
+                                this.$options.methods.handleSizeChange(self_.list_type.show_num, self_)
+                            }
                         })
-                        let self_ = this
-                        this.$options.methods.handleSizeChange(self_.list_type.show_num,self_)
-                    }
+                        .catch(err => {
+                            console.log(err)
+                        })
                 })
-                .catch(err => {
-                    console.log(err)
-                })
+                .catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消删除'
+                    });
+                });
+
         },
         //检索
         search_() {
@@ -253,10 +281,9 @@ export default {
 
 <style lang="scss" scoped>
 .z {
-    display: flex;
-    justify-content: center;
     .wrapper {
         width: 1300px;
+        margin: 0px auto;
         padding: 40px 0px;
         .u {
             padding: 10px 0px;
@@ -271,6 +298,13 @@ export default {
         .el-pagination {
             padding: 22px 0px;
             text-align: center;
+        }
+    }
+}
+@media screen and (max-width: 1400px) {
+    .z {
+        .wrapper {
+            width: 99%;
         }
     }
 }

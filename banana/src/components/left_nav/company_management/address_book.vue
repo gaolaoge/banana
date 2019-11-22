@@ -252,7 +252,6 @@ export default {
 <style lang="scss" scoped>
 .address_book {
     .wrapper {
-        // border: 1px solid tomato;
         width: 1300px;
         margin: 40px auto;
         .info_,
@@ -326,7 +325,7 @@ export default {
                 margin: 56px auto;
             }
             .card_ {
-                width: 662px;
+                width: 90%;
                 height: 285px;
                 margin: 0px auto;
                 background: #f2f2f2;
@@ -370,5 +369,12 @@ export default {
 /deep/ .el-carousel__button {
     background: #ddd;
     height: 3px;
+}
+@media screen and (max-width: 1470px) {
+    .address_book {
+        .wrapper {
+            width: 99%;
+        }
+    }
 }
 </style>

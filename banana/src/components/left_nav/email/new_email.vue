@@ -32,9 +32,7 @@
                     </quill-editor>
                     <div class="a">
                         <el-button @click="release">发布</el-button>
-                        <!-- <el-button>预览</el-button> -->
                         <el-button @click="release('草稿')">存草稿</el-button>
-                        <!-- <el-button @click="$router.push('/message_center/inbox?state=inbox')">关闭</el-button> -->
                     </div>
                 </el-form>
             </div>
@@ -160,15 +158,15 @@ export default {
                 if (u['name'].length || u['tit'] || u['text']) {
                     draft_email({ 'data': u })
                         .then(data => {
-                            if (data.data == '发送成功') {
+                            // if (data.data == '成功') {
                                 this.$message({
                                     message: '保存成功',
                                     type: 'success'
                                 })
                                 setTimeout(function () {
-                                    self_.$router.push('/message_center/inbox?state=inbox')
+                                    self_.$router.push('/message_center/inbox?state=draft_box')
                                 }, 1000)
-                            }
+                            // }
                         })
                 } else {
                     this.$message.error('暂无数据可以保存')
@@ -397,6 +395,17 @@ export default {
     .n {
         float: right;
         margin: 0px 8px;
+    }
+}
+@media screen and (max-width: 1400px) {
+    .new_email {
+        .wrapper {
+            width: 99%;
+            .el-input,
+            .quill-editor {
+                width: calc(100% - 100px);
+            }
+        }
     }
 }
 </style>

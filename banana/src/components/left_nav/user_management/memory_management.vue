@@ -120,7 +120,7 @@
                                                 opacity="1"
                                             >
                                             </rect>
-                                            
+
                                             <rect
                                                 class="water-fill"
                                                 mask="url(#text-mask)"
@@ -266,7 +266,9 @@
 
 import {
     post_memory,
-    eochSpace} from '@/api/api_base'
+    eochSpace
+} from '@/api/api_base'
+import { mapState } from 'vuex'
 
 export default {
     name: 'memory_management',
@@ -277,52 +279,6 @@ export default {
                 byteUnits: 'MB',
                 reason: ''
             },
-            type_all: [
-                {
-                    val: 'all',
-                    label: '全部'
-                },
-                {
-                    val: 'ppt',
-                    label: 'PPT'
-                },
-                {
-                    val: 'pdf',
-                    label: 'PDF'
-                },
-                {
-                    val: 'word',
-                    label: 'WORD'
-                },
-                {
-                    val: 'excel',
-                    label: 'EXCEL'
-                },
-                {
-                    val: 'HTML',
-                    label: 'HTML'
-                },
-                {
-                    val: 'exe',
-                    label: 'EXE'
-                },
-                {
-                    val: 'jpg',
-                    label: 'JPG'
-                },
-                {
-                    val: 'png',
-                    label: 'PNG'
-                },
-                {
-                    val: 'psd',
-                    label: 'PSD'
-                },
-                {
-                    val: 'other',
-                    label: '其他'
-                },
-            ],
             svg_: {
                 totalSpace: 0,
                 usedSpace: 0,
@@ -330,13 +286,24 @@ export default {
             }
         }
     },
+    computed: {
+        ...mapState(['type_all'])
+    },
     methods: {
         //发送数据
         onSubmit() {
             let j = this.form_
             post_memory({ 'data': j })
                 .then(data => {
-
+                    this.$message({
+                        message: '提交成功！',
+                        type: 'success'
+                    })
+                    this.form_ = {
+                        totalSpace: '',
+                        byteUnits: 'MB',
+                        reason: ''
+                    }
                 })
                 .catch(err => {
 
@@ -354,12 +321,11 @@ export default {
 
 <style scoped lang="scss">
 .w {
-    display: flex;
-    justify-content: center;
     .wrapper {
         width: 1300px;
         position: relative;
-        height: 500px;
+        // height: 500px;
+        margin: 0px auto;
         .search_box {
             padding-top: 20px;
             .item_select {
@@ -381,6 +347,7 @@ export default {
             width: 260px;
             height: 260px;
             .blue_border {
+                position: relative;
                 width: 100%;
                 height: 100%;
                 border-radius: 50%;
@@ -403,7 +370,7 @@ export default {
                     }
                     .h {
                         position: absolute;
-                        left: 108px;
+                        left: 72px;
                         color: #fff;
                         font-weight: 800;
                         z-index: 999;
@@ -413,7 +380,7 @@ export default {
                         text-align: center;
                     }
                     .l {
-                        top: 276px;
+                        top: 126px;
                     }
                 }
             }
@@ -439,8 +406,22 @@ export default {
         }
     }
 }
-
 svg {
     position: absolute;
+}
+@media screen and (max-width: 1400px) {
+    .w {
+        .wrapper {
+            width: 99%;
+            .form_ {
+                display: block;
+                margin: 80px auto;
+            }
+            .show_capacity {
+                display: block;
+                margin: 40px auto;
+            }
+        }
+    }
 }
 </style>

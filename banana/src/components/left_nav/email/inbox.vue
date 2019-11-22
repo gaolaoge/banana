@@ -50,6 +50,7 @@
                         <el-button @click="move('已删除')">删除</el-button>
                         <el-button @click="detele_true()">彻底删除</el-button>
                     </div>
+                    <hr class="pp">
                     <!-- 标记为 -->
                     <el-select
                         v-model="labeled_"
@@ -173,8 +174,10 @@
                     :all_data="table_"
                     :envelope_text="d_"
                     :options_="search_.custom_folder"
+                    :filder="active_c"
                     @reset="reset_()"
                     @reset_="inbox_count()"
+                    @shutdown="shut_"
                 ></envelope>
             </div>
         </el-dialog>
@@ -271,7 +274,6 @@ export default {
     name: 'inbox',
     data() {
         return {
-            // url_: window.location.search,
             n: null,
             active_c: '收件箱',
             num_: 0,
@@ -333,6 +335,11 @@ export default {
         }
     },
     methods: {
+        // 关闭窗口
+        shut_(){
+            this.text_ = false
+            this.inbox_count(this.n)
+        },
         tableRowClassName({ row, rowIndex }) {
             row.index = rowIndex
         },
@@ -545,7 +552,6 @@ export default {
         },
         //查看邮件
         check_mail(x) {
-            console.log(x.index)
             if (this.lock) {
                 this.d_ = x
                 this.text_ = true
@@ -561,7 +567,6 @@ export default {
             }
             delete_and_move({ 'data': this.multipleSelection, 'destination': destination })
                 .then(data => {
-                    // console.log(data)
                     if (data.data == 1) {
                         self_.$message({
                             message: '移动成功',
@@ -601,24 +606,15 @@ export default {
             } else {
                 z.star = 1
             }
-            console.log(z)
-            // if(z.star == 1){
-            //     z.star = 0
-            // }else{
-            //     z.star = 1  
-            // }
             star_({ 'data': z })
                 .then(data => {
-                    self_.inbox_count('标星箱')
+                    self_.inbox_count(self_.n)
                 })
                 .catch(err => {
 
                 })
             return false
         },
-        // search_s() {
-        //     console.log()
-        // },
         //当前页展示信息数量
         handleSizeChange(z) {
             this.list_type.show_num = z
@@ -646,7 +642,6 @@ export default {
         },
         //回显数据 + 关键字查询
         inbox_count(z, callbackFun) {
-            // alert('p')
             this.customize = false
             if (z) {
                 this.list_type.folder = z
@@ -694,10 +689,8 @@ export default {
         },
         //监听url
         m() {
-            // alert('m')
-            let t = window.location.search.split('=')[1],
+            let t = this.$route.query.state,
                 self_ = this
-            // n = null
             switch (t) {
                 case ('inbox'):
                     self_.n = '收件箱'
@@ -724,53 +717,20 @@ export default {
         }
     },
     watch: {
-        $route: {
+        "$route": {
             handler: function (val, oldVal) {
                 this.m()
             },
-            // 深度观察监听
-            deep: true
+            deep: true,
+            immediate: true
         }
     },
-    // computed: {
-    //     r: () => {
-    //         // alert('t')
-    //         // return window.location.search.split('=')[1]
-    //         return window.location.href
-    //     }
-    // },
     created() {
-        // let t = window.location.search.split('=')[1],
-        // self_ = this,
-        //     n = null
-        // switch(t){
-        //     case('inbox'): 
-        //         n =  '收件箱'
-        //         self_.active_c = '收件箱'
-        //         break;
-        //     case('star_box'): 
-        //         n =  '标星箱'
-        //         self_.active_c = '标星箱'
-        //         break;
-        //     case('draft_box'): 
-        //         n =  '草稿箱'
-        //         self_.active_c = '草稿箱'
-        //         break;
-        //     case('send_box'): 
-        //         n =  '已发送'
-        //         self_.active_c = '已发送'
-        //         break;
-        //     case('delete_box'): 
-        //         n =  '已删除'
-        //         self_.active_c = '已删除'
-        //         break;
-        // }
         this.m()
         this.inbox_count(this.n)
-        // window.onhashchange = this.m()
     },
     components: {
-        envelope
+        envelope,
     },
 }
 </script>
@@ -782,6 +742,9 @@ export default {
     .wrapper {
         width: 1300px;
         padding: 20px 0px;
+        .pp {
+            display: none;
+        }
         .i_ {
             width: 220px;
             margin-right: 6px;
@@ -830,5 +793,16 @@ export default {
 }
 .management_create {
     float: right;
+}
+@media screen and (min-width: 400px) {
+    .inbox {
+        .wrapper {
+            width: 99%;
+            .pp {
+                display: block;
+                opacity: 0;
+            }
+        }
+    }
 }
 </style>

@@ -77,16 +77,6 @@
                             @change="cd"
                         >
                         </el-date-picker>
-                        <!-- <div class="btn_interval">
-                            <el-switch
-                                v-model="picker_"
-                                active-color="#ff4949"
-                                inactive-color="#13ce66"
-                                active-text="倒序"
-                                inactive-text="正序"
-                            >
-                            </el-switch>
-                        </div> -->
                     </div>
                     <div class="l">
                         <div class="default_tree">
@@ -113,7 +103,6 @@
                                 </el-timeline-item>
                             </el-timeline>
                         </div>
-                        <!-- {{ activities }} -->
                         <div
                             class="add_more"
                             v-if="!lock_"
@@ -135,20 +124,15 @@
             width="38%"
             top="3%"
             class="dialog_"
+            @closed="file_url = null"
         >
-            <img
-                :src="file_url"
-                alt=""
-                v-if="preview_ == 'img'"
-                class="img_"
+            <iframe
+                :src='file_url'
+                width='100%'
+                height='600'
+                frameborder='1'
             >
-            <video
-                :src="file_url"
-                alt=""
-                v-if="preview_ == 'mp4'"
-                class="img_"
-                controls
-            ></video>
+            </iframe>
         </el-dialog>
     </div>
 </template>
@@ -167,7 +151,6 @@ export default {
             lock_: false,
             current_page: '1',
             file_url: '',
-            preview_: '',                    //预览类型
             dialogVisible: false,
             show_moudle: 'login_page',
             main: true,
@@ -207,16 +190,6 @@ export default {
             let self_ = this
             preview_data({ 'path': t, 'name': k })
                 .then(data => {
-                    let arr = k.split('.')
-                    self_.preview_ = arr[arr.length - 1]
-                    switch (self_.preview_) {
-                        case 'jpg':
-                            self_.preview_ = 'img'
-                            break
-                        case 'mp4':
-                            self_.preview_ = 'mp4'
-                            break
-                    }
                     self_.dialogVisible = true
                     self_.file_url = data.data
                 })
@@ -398,19 +371,20 @@ export default {
     width: 100%;
 }
 .i {
-    // color: #fff;
     color: #f56c6c;
     border-radius: 2px;
-    // line-height: 1.0em
-    // padding: 1px;
     font-size: 16px;
     font-weight: 600;
-    // margin-left: 12px;
 }
 .add_more {
-    // position: absolute;
     width: 100%;
-    // bottom: 50px;
     text-align: center;
+}
+@media screen and (max-width: 1400px) {
+    .record {
+        .wrapper {
+            width: 99%;
+        }
+    }
 }
 </style>

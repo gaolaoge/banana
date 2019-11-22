@@ -1,10 +1,31 @@
-import { axios_j
-    ,axios_w } from '@/api/axios_create'
+import { 
+    axios_j,
+    axios_w 
+} from '@/api/axios_create'
 
 //main_modeule 获取基础数据
 export function baseData(data){
     return axios_w({
         url: `/company/firm_userBasicInfo.do`,
+        method: 'POST',
+        timeout: 5000,
+        data
+    })
+}
+
+//login_page 发送账号
+export function send_account(data){
+    return axios_w({
+        url: `/login/reset.do?${data}`,
+        method: 'GET',
+        timeout: 5000,
+    })
+}
+
+//login_page 修改密码
+export function send_password(data){
+    return axios_w({
+        url: `/login/verify.do`,
         method: 'POST',
         timeout: 5000,
         data
@@ -244,6 +265,16 @@ export function sign_(data){
     })
 }
 
+//inbox 草稿发送
+export function draft_send(data){
+    return axios_w({
+        url: `/MessageCenter/update_temporaryStorage.do`,
+        method: 'POST',
+        timeout: 5000,
+        data
+    })
+}
+
 //Dashboard 
 export function Dashboard(){
     return axios_w({
@@ -353,13 +384,22 @@ export function file_pre(data){
     })
 }
 
-//enterprise   文件下载
-export function e_file_download(data){
+//enterprise 下载
+export function enterprise_download(data){
     return axios_w({
         url: `/company/enterpriseFile_download.do`,
-        method: 'GET',
+        method: 'POST',
         timeout: 5000,
-        responseType: "blob",
+        data
+    })
+}
+
+//enterprise 分享
+export function share_file(data){
+    return axios_w({
+        url: `/system/sharedFile.do`,
+        method: 'POST',
+        timeout: 5000,
         data
     })
 }
@@ -466,7 +506,7 @@ export function details_record(data){
 
 //new_email   发邮件
 export function send_new_email(data){
-    return axios_j({
+    return axios_w({
         url: `/MessageCenter/sendEmails.do`,
         method: 'POST',
         timeout: 5000,
@@ -476,7 +516,7 @@ export function send_new_email(data){
 
 //new_email   近期联系人
 export function catch_email(data){
-    return axios_j({
+    return axios_w({
         url: `/MessageCenter/recentContact.do`,
         method: 'GET',
         timeout: 5000,
@@ -485,7 +525,7 @@ export function catch_email(data){
 
 //new_email   草稿
 export function draft_email(data){
-    return axios_j({
+    return axios_w({
         url: `/MessageCenter/temporaryStorage.do`,
         method: 'POST',
         timeout: 5000,
@@ -495,7 +535,7 @@ export function draft_email(data){
 
 //document_retrieval 获取列表数据
 export function retrieval_obtain(data){
-    return axios_j({
+    return axios_w({
         url: `/userInfo/keyWord.do`,
         method: 'POST',
         timeout: 5000,
@@ -607,6 +647,46 @@ export function im_group_search(data){
 export function console_base(data){
     return axios_w({
         url: `/console/consoleShow.do`,
+        method: 'POST',
+        timeout: 5000,
+        data
+    })
+}
+
+//visual_analysis 部门 - 生成图表
+export function visual_analysis_parts_push(data){
+    return axios_w({
+        url: `/visual/D_visualGetParameter.do`,
+        method: 'POST',
+        timeout: 5000,
+        data
+    })
+}
+
+//visual_analysis 用户 - 生成图表
+export function visual_analysis_users_push(data){
+    return axios_w({
+        url: `/visual/U_visualGetParameter.do`,
+        method: 'POST',
+        timeout: 5000,
+        data
+    })
+}
+
+//visual_analysis 图表回显 
+export function visual_analysis_callback(data){
+    return axios_w({
+        url: `/visual/getVisualCharList.do`,
+        method: 'POST',
+        timeout: 5000,
+        data
+    })
+}
+
+//visual_analysis 图表删除
+export function visual_analysis_delete(data){
+    return axios_w({
+        url: `/visual/visual_deleteChar.do`,
         method: 'POST',
         timeout: 5000,
         data

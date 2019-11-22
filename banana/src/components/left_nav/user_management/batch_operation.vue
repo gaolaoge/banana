@@ -94,12 +94,6 @@
                                     v-if="i.reason == 'begin'"
                                     v-on:click="back_(i)"
                                 ></i>
-                                <!-- <i
-                                    class="el-icon-circle-plus-outline"
-                                    style="background-color: #67C23A;color: #fff;border-radius: 50%"
-                                    v-if="i.reason == 'done'"
-                                ></i> -->
-                                <!-- [ {{ i.root }} ] -->
                             </li>
                         </ul>
                     </li>
@@ -131,263 +125,7 @@ export default {
     data() {
         return {
             data: '',           //留作对比的数据
-            users: {            //修改的数据
-                // //营销部
-                // '营销部': [
-                //     {
-                //         userName: '高歌',
-                //         account: 'gaoge',
-                //         id: '001',
-                //         department: '营销部'
-                //     },
-                //     {
-                //         userName: '王强',
-                //         account: 'wangqiang',
-                //         id: '002',
-                //         department: '营销部'
-                //     },
-                //     {
-                //         userName: '张宇',
-                //         account: 'zhangyu',
-                //         id: '003',
-                //         department: '营销部'
-                //     },
-                //     {
-                //         userName: '林梦至',
-                //         account: 'linmengzhi',
-                //         id: '004',
-                //         department: '营销部'
-                //     },
-                //     {
-                //         userName: '贾冰倩',
-                //         account: 'jiabingqian',
-                //         id: '005',
-                //         department: '营销部'
-                //     },
-                //     {
-                //         userName: '贾冰倩2',
-                //         account: 'jiabingqian2',
-                //         id: '006',
-                //         department: '营销部'
-                //     },
-                //     {
-                //         userName: '贾冰倩3',
-                //         account: 'jiabingqian3',
-                //         id: '007',
-                //         department: '营销部'
-                //     },
-                //     {
-                //         userName: '贾冰倩4',
-                //         account: 'jiabingqian4',
-                //         id: '008',
-                //         department: '营销部'
-                //     },
-                //     {
-                //         userName: '贾冰倩5',
-                //         account: 'jiabingqian5',
-                //         id: '009',
-                //         department: '营销部'
-                //     },
-                // ],
-                // //产品部
-                // '产品部': [
-                //     {
-                //         userName: '周杰伦',
-                //         account: 'zhoujielun',
-                //         id: '011',
-                //         department: '产品部'
-                //     },
-                //     {
-                //         userName: '陈奕迅',
-                //         account: 'chenyixun',
-                //         id: '012',
-                //         department: '产品部'
-                //     },
-                //     {
-                //         userName: '王力宏',
-                //         account: 'wanglihong',
-                //         id: '013',
-                //         department: '产品部'
-                //     },
-                //     {
-                //         userName: '林志炫',
-                //         account: 'linzhixuan',
-                //         id: '014',
-                //         department: '产品部'
-                //     },
-                //     {
-                //         userName: '薛之谦',
-                //         account: 'xuezhixqian',
-                //         id: '015',
-                //         department: '产品部'
-                //     },
-                // ],
-                // //市场部
-                // '市场部': [
-                //     {
-                //         userName: '王旭',
-                //         account: 'wangxu',
-                //         id: '021',
-                //         department: '市场部'
-                //     },
-                //     {
-                //         userName: '郑香宜',
-                //         account: 'zhengxiangyi',
-                //         id: '022',
-                //         department: '市场部'
-                //     },
-                //     {
-                //         userName: '解晨',
-                //         account: 'xiechen',
-                //         id: '023',
-                //         department: '市场部'
-                //     },
-                //     {
-                //         userName: '孙伟鹏',
-                //         account: 'sunweipeng',
-                //         id: '024',
-                //         department: '市场部'
-                //     },
-                //     {
-                //         userName: '吴春亮',
-                //         account: 'wuchunliang',
-                //         id: '025',
-                //         department: '市场部'
-                //     },
-                // ],
-                // //人事部
-                // '人事部': [
-                //     {
-                //         userName: '常旭',
-                //         account: 'cahngxu',
-                //         id: '031',
-                //         department: '人事部'
-                //     },
-                //     {
-                //         userName: '何晓言',
-                //         account: 'hexiaoyan',
-                //         id: '032',
-                //         department: '人事部'
-                //     },
-                //     {
-                //         userName: '理想',
-                //         account: 'lixiang',
-                //         id: '033',
-                //         department: '人事部'
-                //     },
-                //     {
-                //         userName: '曾智慧',
-                //         account: 'zengzhihui',
-                //         id: '034',
-                //         department: '人事部'
-                //     },
-                //     {
-                //         userName: '张大光',
-                //         account: 'zhangdaguang',
-                //         id: '035',
-                //         department: '人事部'
-                //     },
-                // ],
-                // //研发部
-                // '研发部': [
-                //     {
-                //         userName: '雷军',
-                //         account: 'leijun',
-                //         id: '041',
-                //         department: '研发部'
-                //     },
-                //     {
-                //         userName: '贾跃亭',
-                //         account: 'jiayueting',
-                //         id: '042',
-                //         department: '研发部'
-                //     },
-                //     {
-                //         userName: '罗永浩',
-                //         account: 'luoyonghao',
-                //         id: '043',
-                //         department: '研发部'
-                //     },
-                //     {
-                //         userName: '任正非',
-                //         account: 'renzhengfei',
-                //         id: '044',
-                //         department: '研发部'
-                //     },
-                //     {
-                //         userName: '乔布斯',
-                //         account: 'qiaobusi',
-                //         id: '045',
-                //         department: '研发部'
-                //     },
-                // ],
-                // //设计部
-                // '设计部': [
-                //     {
-                //         userName: '郭德纲',
-                //         account: 'guodegang',
-                //         id: '051',
-                //         department: '设计部'
-                //     },
-                //     {
-                //         userName: '于谦',
-                //         account: 'yuqian',
-                //         id: '052',
-                //         department: '设计部'
-                //     },
-                //     {
-                //         userName: '岳云鹏',
-                //         account: 'yueyunpeng',
-                //         id: '053',
-                //         department: '设计部'
-                //     },
-                //     {
-                //         userName: '孙越',
-                //         account: 'sunyue',
-                //         id: '054',
-                //         department: '设计部'
-                //     },
-                //     {
-                //         userName: '高峰',
-                //         account: 'gaofeng',
-                //         id: '055',
-                //         department: '设计部'
-                //     },
-                // ],
-                // //后勤部
-                // '后勤部': [
-                //     {
-                //         userName: '刘德华',
-                //         account: 'liudehua',
-                //         id: '061',
-                //         department: '后勤部'
-                //     },
-                //     {
-                //         userName: '周润发',
-                //         account: 'zhourunfa',
-                //         id: '062',
-                //         department: '后勤部'
-                //     },
-                //     {
-                //         userName: '张学友',
-                //         account: 'zhangxueyou',
-                //         id: '063',
-                //         department: '后勤部'
-                //     },
-                //     {
-                //         userName: '陈雪凝',
-                //         account: 'chenxuening',
-                //         id: '064',
-                //         department: '后勤部'
-                //     },
-                //     {
-                //         userName: '邓紫棋',
-                //         account: 'dengziqi',
-                //         id: '065',
-                //         department: '后勤部'
-                //     },
-                // ],
-            },
+            users: {},            //修改的数据
             t: {},
             dialogVisible: false,
             num: {
@@ -405,10 +143,8 @@ export default {
     methods: {
         //多选
         s(e) {
-            // console.log(e.currentTarget.innerText)
             let part_ = e.currentTarget.innerText.split(' - ')[0],
                 name_ = e.currentTarget.innerText.split(' - ')[1]
-            // console.log(e.currentTarget.classList.length)
             if (e.currentTarget.classList.length == 0) {            //放入拖动队列
                 e.currentTarget.classList.add('pitch_on')
                 if (this.pitch_on[part_]) {
@@ -421,7 +157,6 @@ export default {
                 let i = this.pitch_on[part_].indexOf(name_)
                 this.pitch_on[part_].splice(i, 1)
             }
-            // console.log(this.pitch_on)
         },
         dragover_(ev) {
             ev.preventDefault();
@@ -442,17 +177,17 @@ export default {
                 data = ev.dataTransfer.getData("Text").split(' - ')
                 old_part = data[0]
                 name = data[1]
-                move_(old_part,name)
+                move_(old_part, name)
             } else {                                                   //批量移动
                 Object.keys(this.pitch_on).forEach((currentVal) => {
                     old_part = currentVal
                     this.pitch_on[currentVal].forEach((currentval_) => {
                         name = currentval_
-                        move_(old_part,name)
+                        move_(old_part, name)
                     })
                 })
             }
-            function move_(o_,n_) {
+            function move_(o_, n_) {
                 let s = self_.users[o_].findIndex((currentVal, index, arr) => {
                     return currentVal.userName == n_
                 }),
@@ -466,7 +201,7 @@ export default {
                 self_.users[o_].splice(s, 1)
                 self_.users[new_part].push(user_info)
                 self_.num[new_part]++
-                for(var i in self_.pitch_on){
+                for (var i in self_.pitch_on) {
                     delete self_.pitch_on[i]
                 }
             }
@@ -509,7 +244,6 @@ export default {
             } else {
                 this.dialogVisible = true
             }
-            // console.log(this.t)
         },
         //取消
         cancel() {
@@ -566,15 +300,10 @@ export default {
                 })
             i_.department = back_
             delete i_.revise
-            // console.log(i_)
             this.users[to_].splice(index_to, 1)
             this.users[back_].push(i_)
             this.t = {}
-            // console.log(this.num[to_])
             this.num[to_]--
-            // console.log(ii)
-            // console.log(i_)
-            // console.log(this.t)
             Object.keys(this.users).forEach((currentVal, index, arr) => {
                 this.users[currentVal].forEach((currentVal_, index_, arr_) => {
                     let s = this.data[currentVal].find((currentVal_i, index_i, arr_i) => {
@@ -595,7 +324,6 @@ export default {
     created() {
         get_data()
             .then(data => {
-                // console.log()
                 // this.users = data.data
                 this.data = JSON.parse(JSON.stringify(data.data))
                 this.users = JSON.parse(JSON.stringify(data.data))
@@ -605,7 +333,6 @@ export default {
                         currentval_.revise = false
                     })
                 })
-                // console.log(this.users)
                 // this.users = data.data.map((currentVal, index, arr) => {
                 //     currentVal.forEach((currentval_, index_, arr_) => {
                 //         currentval_.revise = false
@@ -622,156 +349,164 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.wrapper {
-    position: relative;
-    top: 60px;
-    width: 1200px;
-    background: rgb(250, 250, 250);
-    border-radius: 6px;
-    /* height: 100px; */
-    margin-left: 50%;
-    transform: translateX(-50%);
-    font-size: 0px;
-    .left_,
-    .right_ {
-        vertical-align: top;
-        display: inline-block;
-        width: 46%;
-        height: 600px;
-        padding: 20px;
-        font-size: 12px;
-        .confirm {
+.batch_operation {
+    .wrapper {
+        margin: 0px auto;
+        position: relative;
+        top: 60px;
+        width: 1100px;
+        background: rgb(250, 250, 250);
+        border-radius: 6px;
+        padding: 20px 20px 120px 20px;
+        font-size: 0px;
+        box-sizing: border-box;
+        .left_,
+        .right_ {
+            vertical-align: top;
+            display: inline-block;
+            // width: 46%;
+            height: 600px;
+            // padding: 20px;
+            font-size: 12px;
+            .confirm {
+                float: right;
+                margin-top: -60px;
+            }
+        }
+        .right_ {
             float: right;
         }
-    }
-    .wrapper_list {
-        padding: 12px 32px;
-        li {
-            list-style: none;
-            .item {
-                font-size: 16px;
-                width: 280px;
+        .wrapper_list {
+            padding: 12px 32px;
+            li {
+                list-style: none;
+                .item {
+                    font-size: 16px;
+                    width: 240px;
+                    height: 48px;
+                    background: #a3b7e3;
+                    line-height: 48px;
+                    text-align: left;
+                    margin: 6px;
+                    padding-left: 40px;
+                    cursor: pointer;
+                    color: #fff;
+                    box-shadow: 5px 5px 5px 0px #ccc;
+                    border-radius: 2px;
+                    transition: all 0.2s;
+                    &:hover {
+                        background: #becef1;
+                    }
+                    .badge_ {
+                        display: inline;
+                    }
+                    .span {
+                        padding: 0px 10px;
+                    }
+                }
+            }
+            .pitch_on .item {
+                background-color: #89a;
+            }
+        }
+        .department_ {
+            padding: 20px;
+            li {
+                width: 240px;
                 height: 48px;
-                background: #a3b7e3;
+                margin-bottom: 20px;
+                list-style: none;
                 line-height: 48px;
-                text-align: left;
-                margin: 6px;
-                padding-left: 40px;
-                cursor: pointer;
+                text-align: center;
                 color: #fff;
+                font-size: 16px;
+                font-weight: 700;
                 box-shadow: 5px 5px 5px 0px #ccc;
-                border-radius: 2px;
-                transition: all 0.2s;
-                &:hover {
-                    background: #becef1;
+                &:nth-of-type(1) {
+                    background: #af85d9;
                 }
-                .badge_ {
-                    display: inline;
+                &:nth-of-type(2) {
+                    background: #a78df2;
                 }
-                .span {
-                    padding: 0px 10px;
+                &:nth-of-type(3) {
+                    background: #9f9ffb;
+                }
+                &:nth-of-type(4) {
+                    background: #9fbdfb;
+                }
+                &:nth-of-type(5) {
+                    background: #9fdbfb;
+                }
+                &:nth-of-type(6) {
+                    background: #a3d9d9;
+                }
+                &:nth-of-type(7) {
+                    background: #95e4aa;
                 }
             }
         }
-        .pitch_on .item {
-            background-color: #89a;
+        .confirm {
+            position: absolute;
+            bottom: 120px;
+            right: 20px;
         }
     }
-    .department_ {
-        padding: 20px;
-        li {
-            width: 300px;
-            height: 48px;
-            margin-bottom: 20px;
-            margin-left: 90px;
+    .d {
+        display: flex;
+        overflow-y: auto;
+        overflow-x: auto;
+        height: 400px;
+        .item_ {
+            flex-shrink: 0;
+            width: 170px;
             list-style: none;
-            line-height: 48px;
-            text-align: center;
-            color: #fff;
-            font-size: 16px;
-            font-weight: 700;
-            box-shadow: 5px 5px 5px 0px #ccc;
-            &:nth-of-type(1) {
-                background: #af85d9;
+            vertical-align: top;
+            padding-left: 40px;
+            li {
+                list-style: none;
+                line-height: 2.4em;
             }
-            &:nth-of-type(2) {
-                background: #a78df2;
-            }
-            &:nth-of-type(3) {
-                background: #9f9ffb;
-            }
-            &:nth-of-type(4) {
-                background: #9fbdfb;
-            }
-            &:nth-of-type(5) {
-                background: #9fdbfb;
-            }
-            &:nth-of-type(6) {
-                background: #a3d9d9;
-            }
-            &:nth-of-type(7) {
-                background: #95e4aa;
+            .tit {
+                font-weight: 600;
             }
         }
     }
-    .confirm {
-        position: absolute;
-        bottom: 20px;
-        right: 20px;
+
+    /deep/ .el-icon-delete-solid {
+        cursor: pointer;
     }
-}
-.d {
-    display: flex;
-    overflow-y: auto;
-    overflow-x: auto;
-    height: 400px;
-    .item_ {
-        flex-shrink: 0;
-        width: 170px;
-        list-style: none;
-        vertical-align: top;
-        padding-left: 40px;
-        // border: 1px solid #eee;
-        li {
-            list-style: none;
-            line-height: 2.4em;
-        }
-        .tit {
-            font-weight: 600;
-        }
+    /deep/ .el-tabs__content {
+        height: 100%;
+        overflow-y: auto;
+    }
+    .d::-webkit-scrollbar,
+    /deep/ .el-tabs__content::-webkit-scrollbar {
+        /*滚动条整体样式*/
+        width: 8px; /*高宽分别对应横竖滚动条的尺寸*/
+        height: 8px;
+    }
+    .d::-webkit-scrollbar-thumb,
+    /deep/ .el-tabs__content::-webkit-scrollbar-thumb {
+        /*滚动条里面小方块*/
+        border-radius: 10px;
+        -webkit-box-shadow: inset 0 0 5px rgba(102, 89, 89, 0.2);
+        background: #9e9797;
+    }
+    .d::-webkit-scrollbar-track,
+    /deep/ .el-tabs__content::-webkit-scrollbar-track {
+        /*滚动条里面轨道*/
+        -webkit-box-shadow: inset 0 0 5px rgba(138, 129, 129, 0.2);
+        border-radius: 10px;
+        background: rgb(226, 221, 221);
     }
 }
 
-/deep/ .el-icon-delete-solid {
-    cursor: pointer;
-}
-/deep/ .el-tabs__content {
-    height: 100%;
-    overflow-y: auto;
-}
-.d::-webkit-scrollbar,
-/deep/ .el-tabs__content::-webkit-scrollbar {
-    /*滚动条整体样式*/
-    width: 8px; /*高宽分别对应横竖滚动条的尺寸*/
-    height: 8px;
-}
-.d::-webkit-scrollbar-thumb,
-/deep/ .el-tabs__content::-webkit-scrollbar-thumb {
-    /*滚动条里面小方块*/
-    border-radius: 10px;
-    -webkit-box-shadow: inset 0 0 5px rgba(102, 89, 89, 0.2);
-    background: #9e9797;
-    // -webkit-box-shadow: inset 0 0 5px rgba(102, 89, 89, 0);
-    // background: #fafafa;
-}
-.d::-webkit-scrollbar-track,
-/deep/ .el-tabs__content::-webkit-scrollbar-track {
-    /*滚动条里面轨道*/
-    -webkit-box-shadow: inset 0 0 5px rgba(138, 129, 129, 0.2);
-    border-radius: 10px;
-    background: rgb(226, 221, 221);
-    // -webkit-box-shadow: inset 0 0 5px rgba(138, 129, 129, 0);
-    // border-radius: 10px;
-    // background: #fafafa;
+@media screen and (max-width: 1200px) {
+    .batch_operation {
+        .wrapper {
+            width: 99%;
+            top: 6px;
+        }
+    }
 }
 </style>
